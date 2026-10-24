@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 import argparse
 import json
 import os
@@ -322,13 +322,37 @@ def run_self_test(store, timeout=75, sleep=time.sleep, monotonic=time.monotonic)
 
 def main():
     parser = argparse.ArgumentParser(description='SentinelForge: local Windows detection and email alerting')
-    parser.add_argument('command', nargs='?', default='status', choices=['scan','watch','demo','status','notify-pending','setup','baseline-notifications','agent','start','stop','uninstall','self-test'])
+    parser.add_argument('command', nargs='?', default='status', choices=['export-csv','dashboard','scan','watch','demo','status','notify-pending','setup','baseline-notifications','agent','start','stop','uninstall','self-test'])
     parser.add_argument('--db', default=str(Path.home() / 'SentinelForgeData' / 'events.sqlite3'))
     parser.add_argument('--threshold', type=int, default=5)
     parser.add_argument('--interval', type=int, default=60, help='watch polling interval in seconds (minimum 30)')
     parser.add_argument('--max-events', type=int, default=500)
     parser.add_argument('--quiet', action='store_true')
     args = parser.parse_args()
+    if args.command == 'export-csv':
+        from .reporting import export_csv
+        output, count = export_csv(args.db)
+        print(f'Exported {count} evidence rows to: {output}')
+        print('Source database unchanged.')
+        return
+
+    if args.command == 'dashboard':
+        from dashboard import Handler
+        from http.server import ThreadingHTTPServer
+        import webbrowser
+
+        address = 'http://127.0.0.1:8765'
+        server = ThreadingHTTPServer(('127.0.0.1', 8765), Handler)
+        print(f'SentinelForge dashboard: {address}', flush=True)
+        webbrowser.open(address)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            server.server_close()
+        return
+
     if args.command == 'setup':
         setup()
         return
@@ -419,3 +443,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
