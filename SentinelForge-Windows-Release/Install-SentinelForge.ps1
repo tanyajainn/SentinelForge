@@ -1,106 +1,104 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = "Stop"
 
-$taskName = 'SentinelForge Security Monitor'
-$target = Join-Path $env:LOCALAPPDATA 'SentinelForge\bin'
-$cli = Join-Path $PSScriptRoot 'SentinelForge.exe'
-$agent = Join-Path $PSScriptRoot 'SentinelForgeAgent.exe'
+$identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+$principal = [Security.Principal.WindowsPrincipal]::new($identity)
 
-$admin = [Security.Principal.WindowsPrincipal]::new(
-    [Security.Principal.WindowsIdentity]::GetCurrent()
-).IsInRole(
+if (!$principal.IsInRole(
     [Security.Principal.WindowsBuiltInRole]::Administrator
-)
-
-if (!$admin) {
-    throw 'Run PowerShell as Administrator using your own Windows account.'
+)) {
+    throw "Run PowerShell as Administrator using your own Windows account."
 }
 
-if (!(Test-Path $cli) -or !(Test-Path $agent)) {
-    throw 'Required SentinelForge executables are missing.'
-}
+$taskName = "SentinelForge Security Monitor"
+$target = Join-Path $env:LOCALAPPDATA "SentinelForge\bin"
 
 if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
-    throw 'SentinelForge is already installed. Existing installation preserved.'
+    throw "SentinelForge is already installed. Existing installation protected."
 }
 
-foreach ($file in @(
-    "$target\SentinelForge.exe",
-    "$target\SentinelForgeApp.exe",
-    "$target\SentinelForgeAgent.exe"
-)) {
-    if (Test-Path $file) {
-        throw "Existing installation detected: $file"
+if ((Test-Path (Join-Path $target "SentinelForge.exe")) -or
+    (Test-Path (Join-Path $target "SentinelForgeAgent.exe"))) {
+    throw "Existing SentinelForge installation detected."
+}
+
+foreach ($file in @("SentinelForge.exe", "SentinelForgeAgent.exe")) {
+    if (!(Test-Path (Join-Path $PSScriptRoot $file))) {
+        throw "Missing $file. Extract the complete ZIP."
     }
 }
 
-# Existing application setup installs executables,
-# stores Gmail credentials in Windows Credential Manager,
-# and registers the logon monitoring task.
+New-Item -ItemType Directory -Path $target -Force | Out-Null
+
+foreach ($file in @("SentinelForge.exe", "SentinelForgeAgent.exe")) {
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot $file) `
+        -Destination (Join-Path $target $file) -Force
+}
+
+$cli = Join-Path $target "SentinelForge.exe"
+
 & $cli setup
-
 if ($LASTEXITCODE -ne 0) {
-    throw 'SentinelForge setup failed.'
+    throw "SentinelForge setup failed."
 }
 
-$installedCli = Join-Path $target 'SentinelForge.exe'
-$app = Join-Path $target 'SentinelForgeApp.exe'
-
-if (!(Test-Path $installedCli)) {
-    throw 'Application setup did not install the CLI.'
-}
-
-# Rename the CLI so SentinelForge.cmd wins command lookup.
-Rename-Item -LiteralPath $installedCli `
-    -NewName 'SentinelForgeApp.exe' -ErrorAction Stop
-
-$wrapper = Join-Path $target 'SentinelForge.cmd'
-
-$wrapperLines = @(
-    '@echo off',
-    'if "%~1"=="" (',
-    '    "%~dp0SentinelForgeApp.exe" status',
-    ') else (',
-    '    "%~dp0SentinelForgeApp.exe" %*',
-    ')'
-)
-
-Set-Content -LiteralPath $wrapper `
-    -Value $wrapperLines -Encoding ASCII
-
-# Protected Security log needs an elevated monitoring task.
 $task = Get-ScheduledTask -TaskName $taskName -ErrorAction Stop
+$taskUser = $task.Principal.UserId
 
-$principal = New-ScheduledTaskPrincipal `
-    -UserId $task.Principal.UserId `
+if ([string]::IsNullOrWhiteSpace($taskUser)) {
+    throw "Task user could not be verified."
+}
+
+try {
+    $actualSid = ([Security.Principal.NTAccount]::new(
+        $taskUser
+    )).Translate(
+        [Security.Principal.SecurityIdentifier]
+    ).Value
+}
+catch {
+    throw "Could not verify the scheduled task account."
+}
+
+if ($actualSid -ne $identity.User.Value) {
+    throw "Scheduled task account differs from the installation account."
+}
+
+$newPrincipal = New-ScheduledTaskPrincipal `
+    -UserId $taskUser `
     -LogonType Interactive `
     -RunLevel Highest
 
-Set-ScheduledTask -TaskName $taskName `
-    -Principal $principal -ErrorAction Stop | Out-Null
-
-$verified = Get-ScheduledTask -TaskName $taskName
-
-if ($verified.Principal.RunLevel -ne 'Highest') {
-    throw 'Task elevation failed.'
-}
-
 Stop-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+
+Set-ScheduledTask -TaskName $taskName `
+    -Principal $newPrincipal -ErrorAction Stop | Out-Null
+
 Start-ScheduledTask -TaskName $taskName -ErrorAction Stop
 
-# Register one-word command for the current Windows user.
-$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
-$parts = @($userPath -split ';' | Where-Object { $_ })
+$task = Get-ScheduledTask -TaskName $taskName
 
-if ($parts -notcontains $target) {
-    [Environment]::SetEnvironmentVariable(
-        'Path',
-        (($parts + $target) -join ';'),
-        'User'
-    )
+if ($task.Principal.RunLevel -ne "Highest") {
+    throw "Background monitor does not have required privileges."
 }
 
-Write-Host ''
-Write-Host 'INSTALLATION COMPLETE' -ForegroundColor Green
-Write-Host 'Open a NEW PowerShell window and type: SentinelForge'
-Write-Host 'Monitor runs at Windows login.'
-Write-Host 'Confirm actual Gmail inbox delivery separately.'
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$paths = @($userPath -split ";" | Where-Object {
+    $_ -and ($_.TrimEnd("\") -ine $target.TrimEnd("\"))
+})
+
+[Environment]::SetEnvironmentVariable(
+    "Path",
+    (($paths + $target) -join ";"),
+    "User"
+)
+
+& $cli --help | Out-Null
+if ($LASTEXITCODE -ne 0) {
+    throw "SentinelForge CLI test failed."
+}
+
+Write-Host "PASS: SentinelForge installed." -ForegroundColor Green
+Write-Host "PASS: One-word CLI configured." -ForegroundColor Green
+Write-Host "PASS: Background monitor configured with Highest privileges." -ForegroundColor Green
+Write-Host "Open a new PowerShell window and type: SentinelForge"
+Write-Host "Check Gmail delivery separately after setup."
