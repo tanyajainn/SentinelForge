@@ -1,0 +1,79 @@
+﻿# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+build/
+dist/
+
+# Private configuration
+.env
+.env.*
+!.env.example
+credentials.json
+notifications.json
+config.json
+*.key
+*.pem
+*.pfx
+
+# Runtime data
+SentinelForgeData/
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# Backups and local outputs
+*-BACKUP.zip
+*.bak
+*.tmp
+FINAL-VERIFICATION.txt
+FINAL-READINESS.txt
+*-Test-Report.txt
+
+# Distribute compiled binaries through GitHub Releases
+*.exe
+SentinelForge-Windows-Release.zip
+
+# SentinelForge private runtime and recovery files
+recovery-backup-*/
+*backup*/
+*.backup
+*.backup.*
+*.bak
+*.before_*
+*.previous
+*.old
+task-before-elevation.xml
+smtp_retry_state.json
+events.sqlite3
+*.sqlite
+*.sqlite3
+*.db
+*.log
+*.env
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+credentials.json
+config.json
+
+# Build outputs
+build/
+dist/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.exe
+
+# Local reports and packaged binaries
+SentinelForge-Windows-Release.zip
+SentinelForge-Windows-Release.zip.*
+FINAL-VERIFICATION.txt
+FINAL-READINESS.txt
+*-Test-Report.txt
