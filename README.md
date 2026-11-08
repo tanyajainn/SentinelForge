@@ -6,14 +6,14 @@ SentinelForge is a user-scoped Windows monitoring prototype. It reads selected n
 
 ## Evidence-based status
 
-**Project status: Windows monitoring operational; email delivery unverified.**
+**Project status: Windows monitoring operational. Gmail delivery verified on the developer's Windows 11 installation.**
 
 - The one-word `SentinelForge` command works on the developer's Windows installation.
 - The background Scheduled Task runs with elevated privileges.
 - Recent scans report zero inaccessible Windows event-log channels.
 - SQLite retains alerts and tracks notification delivery.
 - SMTP failures are retained in the notification queue with retry cooldowns.
-- Gmail SMTP authentication has been temporarily rate-limited; successful delivery with the latest version has not been confirmed.
+- On November 8, 2026, the installed background agent submitted synthetic self-test alert #717 through Gmail SMTP. The recipient confirmed it arrived in the inbox.
 - The application has not yet passed clean-install testing on another Windows computer.
 
 **Security limitations:** SentinelForge detects selected event patterns. It does not block attacks, replace Microsoft Defender, or guarantee detection of every threat.
