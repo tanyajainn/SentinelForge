@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections import defaultdict, deque
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta, timezone
+import hashlib
+import time
 import json
 import sqlite3
 from pathlib import Path
@@ -11,6 +13,8 @@ RULES = {
     1116: ('high', 'Microsoft Defender malware detection'),
     1117: ('medium', 'Microsoft Defender remediation'),
     1118: ('high', 'Microsoft Defender remediation failed'),
+    5001: ('high', 'Defender real-time protection disabled'),
+    5013: ('high', 'Defender blocked a settings change'),
     5007: ('medium', 'Microsoft Defender configuration changed'),
     4720: ('high', 'Windows user account created'),
     4728: ('high', 'Member added to security-enabled global group'),
@@ -49,6 +53,8 @@ class Store:
         self.db.execute('CREATE TABLE IF NOT EXISTS delivery (alert_id INTEGER PRIMARY KEY, sent_at TEXT, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT, FOREIGN KEY(alert_id) REFERENCES alerts(id))')
         self.db.execute('CREATE TABLE IF NOT EXISTS notification_state (alert_id INTEGER NOT NULL, channel TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT, updated_at TEXT, PRIMARY KEY(alert_id, channel))')
         self.db.execute('CREATE TABLE IF NOT EXISTS notification_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
+        self.db.execute('CREATE TABLE IF NOT EXISTS channel_health (channel TEXT PRIMARY KEY, checked_at TEXT NOT NULL, last_success TEXT, error TEXT)')
+        self.db.execute('CREATE TABLE IF NOT EXISTS emailed_config_changes (fingerprint TEXT PRIMARY KEY, queued_at REAL NOT NULL)')
         self.db.commit()
 
     def is_baselined(self):
@@ -79,6 +85,15 @@ class Store:
         baseline_id=int(row[0])
         return self.db.execute("SELECT COUNT(*) FROM alerts a LEFT JOIN notification_state n ON n.alert_id=a.id AND n.channel=? WHERE a.id>? AND (n.status IS NULL OR n.status='failed')",(channel,baseline_id)).fetchone()[0]
 
+    def record_channel_check(self, channel, error=None):
+        now = datetime.now(timezone.utc).isoformat()
+        with self.db:
+            self.db.execute(
+                "INSERT INTO channel_health VALUES(?,?,?,?) ON CONFLICT(channel) DO UPDATE SET "
+                "checked_at=excluded.checked_at, last_success=COALESCE(excluded.last_success, channel_health.last_success), "
+                "error=excluded.error",
+                (channel, now, now if error is None else None, error))
+
     def cursor(self, channel: str) -> int:
         row = self.db.execute('SELECT record_id FROM cursor WHERE channel=?', (channel,)).fetchone()
         return row[0] if row else 0
@@ -88,9 +103,30 @@ class Store:
         self.db.commit()
 
     def save_alert(self, alert: Alert):
-        cur = self.db.execute('INSERT INTO alerts(timestamp,severity,rule,payload) VALUES(?,?,?,?)', (alert.timestamp,alert.severity,alert.rule,json.dumps(asdict(alert))))
-        self.db.commit()
-        return cur.lastrowid
+        # Commit evidence and its email decision together, even with two writers.
+        with self.db:
+            cur = self.db.execute('INSERT INTO alerts(timestamp,severity,rule,payload) VALUES(?,?,?,?)',
+                                  (alert.timestamp, alert.severity, alert.rule, json.dumps(asdict(alert))))
+            alert_id = cur.lastrowid
+            if alert.rule == 'event-5007' and alert.evidence and self.is_baselined():
+                message = alert.evidence[0].get('message', '')
+                if message:
+                    self._group_config_email(alert_id, message)
+        return alert_id
+
+    def _group_config_email(self, alert_id, message):
+        # Only group identical Defender messages. Changed values get their own mail.
+        now = time.time()
+        fingerprint = hashlib.sha256(message.encode('utf-8')).hexdigest()
+        self.db.execute('DELETE FROM emailed_config_changes WHERE queued_at <= ? OR queued_at > ?',
+                        (now - 3600, now))
+        first = self.db.execute('INSERT OR IGNORE INTO emailed_config_changes VALUES (?, ?)',
+                                (fingerprint, now))
+        if first.rowcount == 0:
+            self.db.execute(
+                "INSERT INTO notification_state(alert_id,channel,status,attempts,updated_at) "
+                "VALUES (?,'email','grouped',0,?)",
+                (alert_id, datetime.now(timezone.utc).isoformat()))
 
     def pending(self, limit=25):
         return [(i, Alert(**json.loads(payload))) for i, payload in self.db.execute(
