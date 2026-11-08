@@ -2,6 +2,8 @@
 
 This is the **source/build kit**, not a precompiled Windows binary. It requires Windows and Python to **build**; end users do not need Python.
 
+Existing installations should follow [HARDENING.md](HARDENING.md) for the limited-task migration and Windows acceptance checks.
+
 ## Build on Windows
 
 In PowerShell, from this folder:
@@ -27,7 +29,7 @@ Setup prompts for the recipient address, Gmail sender, and Gmail App Password. T
 .\SentinelForge.exe uninstall
 ```
 
-**Important:** `uninstall` removes the Scheduled Task but deliberately preserves stored alerts and credentials; remove those separately if desired. For status/stop/start from any directory, use the installed binary at `%LOCALAPPDATA%\SentinelForge\bin\SentinelForge.exe`.
+**Important:** `uninstall` removes the Scheduled Task but deliberately preserves stored alerts and credentials; remove those separately if desired. After protected deployment, use the CLI beside the active scheduled agent as described in [HARDENING.md](HARDENING.md).
 
 ## Limitations and testing
 

@@ -7,7 +7,7 @@ from .core import Event
 CHANNELS = {
     'Security': [4625, 4624, 4720, 4728, 4732, 4697, 1102, 4719],
     'System': [7045],
-    'Microsoft-Windows-Windows Defender/Operational': [1116, 1117, 1118, 5007],
+    'Microsoft-Windows-Windows Defender/Operational': [1116, 1117, 1118, 5001, 5007, 5013],
 }
 
 def fetch(channel: str, after_id: int, max_events: int = 500) -> list[Event]:
@@ -19,7 +19,13 @@ def fetch(channel: str, after_id: int, max_events: int = 500) -> list[Event]:
     ids = ' or '.join(f'EventID={int(event_id)}' for event_id in CHANNELS[channel])
     xpath = f"*[System[({ids}) and (EventRecordID > {int(after_id)})]]"
     ps = f'''$ErrorActionPreference='Stop'
-$events = @(Get-WinEvent -LogName '{channel}' -FilterXPath '{xpath}' -Oldest -MaxEvents {int(max_events)} -ErrorAction SilentlyContinue)
+try {{
+$events = @(Get-WinEvent -LogName '{channel}' -FilterXPath '{xpath}' -Oldest -MaxEvents {int(max_events)} -ErrorAction Stop)
+}} catch {{
+    if ($_.FullyQualifiedErrorId -like 'NoMatchingEventsFound,*') {{ exit 0 }}
+    [Console]::Error.WriteLine($_.Exception.Message)
+    exit 1
+}}
 @($events | ForEach-Object {{ [pscustomobject]@{{channel=$_.LogName;record_id=[long]$_.RecordId;event_id=[int]$_.Id;timestamp=$_.TimeCreated.ToUniversalTime().ToString('o');provider=$_.ProviderName;message=($_.Message | Out-String).Trim()}} }}) | ConvertTo-Json -Depth 4 -Compress
 '''
     p = subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',ps],

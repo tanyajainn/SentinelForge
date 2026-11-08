@@ -9,10 +9,10 @@ SentinelForge is a user-scoped Windows monitoring prototype. It reads selected n
 **Project status: Windows monitoring operational. Gmail delivery verified on the developer's Windows 11 installation.**
 
 - The one-word `SentinelForge` command works on the developer's Windows installation.
-- The background Scheduled Task runs with elevated privileges.
-- Recent scans report zero inaccessible Windows event-log channels.
+- The November 8 installation used an elevated task. This candidate migrates it to a limited task and stores the active executables under Program Files. Windows migration validation is pending.
+- Status reports the last successful read and any current error for each channel.
 - SQLite retains alerts and tracks notification delivery.
-- SMTP failures are retained in the notification queue with retry cooldowns.
+- SMTP failures are retained in the notification queue with retry cooldowns. Identical event 5007 messages share one eligible email per processing hour; all qualifying alerts remain in SQLite.
 - On November 8, 2026, the installed background agent submitted synthetic self-test alert #717 through Gmail SMTP. The recipient confirmed it arrived in the inbox.
 - The application has not yet passed clean-install testing on another Windows computer.
 
@@ -48,13 +48,14 @@ A fully automatic one-word system-wide command on a **fresh computer** is a sepa
 | `SentinelForge start` / `stop` | Manages the scheduled task |
 | `SentinelForge uninstall` | Removes the scheduled task; preserves history and saved credentials |
 
-On an already-installed computer, build with `build-windows.ps1` and run `update-installed.ps1` from the source directory to back up existing binaries and apply this release candidate. The updater **does not delete the database or change the baseline**. It must be executed locally on Windows; Windows behavior has not been tested in this environment.
+For an existing installation, follow [the build, migration and verification steps](HARDENING.md).
+After migration, use the protected CLI beside the scheduled agent for status and self-test.
 
 ## Detection coverage
 
 - Security: 4625 repeated failed sign-ins (5 in 10 minutes, grouped per log channel), 4720 account creation, 4728 and 4732 security-group membership, 4697 service installation, 1102 audit log cleared, 4719 audit-policy changes.
 - System: 7045 service installation.
-- Windows Defender Operational: 1116 detection, 1117 remediation, 1118 remediation failure, 5007 certain configuration changes.
+- Windows Defender Operational: 1116 detection, 1117 remediation, 1118 remediation failure, 5007 selected configuration changes, 5001 real-time protection disabled, 5013 tamper protection blocked a change.
 - 4624 successful sign-ins are collected but not alerted on by default due to high noise.
 
 **Limitations:** Not all Windows editions expose all events to a standard user. No ETW kernel sensor, malware sandbox, memory scanner, behavioral model, tamper protection, or threat prevention is included. Failed logon bursts are aggregated per channel, not by username or source IP; correlation is volatile across restarts. Detection depends on Windows auditing, log retention, adequate privileges, and event volume. `0 alerts` means no configured rule fired, **not that the machine is clean**.

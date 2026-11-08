@@ -41,9 +41,11 @@ def scan(store, detector, max_events, quiet=False):
         try:
             events = fetch(channel, cursor, max_events=max_events)
         except Exception as exc:
+            store.record_channel_check(channel, str(exc)[:400] or type(exc).__name__)
             failed.append(channel)
             print(f'ERROR {channel}: {exc}', file=sys.stderr, flush=True)
             continue
+        store.record_channel_check(channel)
         if len(events) == max_events:
             print(f'INFO {channel}: reached {max_events} event cap; remaining matching events will be read in subsequent scans', file=sys.stderr)
         for ev in events:
@@ -109,10 +111,17 @@ def setup():
         raise SystemExit('Setup requires Windows.')
     if not getattr(sys, 'frozen', False):
         raise SystemExit('Portable setup requires the packaged SentinelForge.exe and SentinelForgeAgent.exe.')
+    import ctypes
+    if ctypes.windll.shell32.IsUserAnAdmin():
+        raise SystemExit('Run first-time setup from a normal PowerShell window.')
     source = Path(sys.executable).resolve()
     agent_source = source.with_name('SentinelForgeAgent.exe')
     if not agent_source.is_file():
         raise SystemExit('SentinelForgeAgent.exe is missing. Extract both executables from the release ZIP.')
+    existing = _powershell("Get-ScheduledTask -TaskName 'SentinelForge Security Monitor' "
+                           "-ErrorAction SilentlyContinue | Select-Object -ExpandProperty TaskName; exit 0")
+    if existing:
+        raise SystemExit('Task already installed. Use update-installed.ps1 for this installation.')
     import keyring
     print('SentinelForge first-time setup (Windows user account)')
     recipient = input('Security alert recipient email: ').strip()
@@ -150,7 +159,8 @@ def setup():
 $action=New-ScheduledTaskAction -Execute '{exe_path}'
 $trigger=New-ScheduledTaskTrigger -AtLogOn -User '{user}'
 $settings=New-ScheduledTaskSettingsSet -MultipleInstances IgnoreNew -ExecutionTimeLimit ([TimeSpan]::Zero) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
-Register-ScheduledTask -TaskName '{task}' -Action $action -Trigger $trigger -Settings $settings -Description 'SentinelForge local Windows security monitoring' -Force | Out-Null
+$principal=New-ScheduledTaskPrincipal -UserId '{user}' -LogonType Interactive -RunLevel Limited
+Register-ScheduledTask -TaskName '{task}' -Principal $principal -Action $action -Trigger $trigger -Settings $settings -Description 'SentinelForge local Windows security monitoring' -Force | Out-Null
 Start-ScheduledTask -TaskName '{task}'
 """
     try:
@@ -376,6 +386,12 @@ def main():
         print('HTTPS notifications configured:', bool(os.getenv('SENTINELFORGE_NTFY_URL')))
         print('Channels:', ', '.join(CHANNELS))
         store = Store(args.db)
+        health = {row[0]: row[1:] for row in store.db.execute(
+            'SELECT channel, last_success, error FROM channel_health')}
+        for channel in CHANNELS:
+            last, error = health.get(channel, (None, None))
+            print(f'{channel}: last successful read {last or "none recorded"}'
+                  + (f' | unreadable: {error}' if error else ''))
         total, pending = store.counts()
         print(f'Alerts stored: {total}')
         print('Legacy undelivered counter:', pending, '(includes historical baseline-excluded alerts)')
