@@ -246,13 +246,9 @@ def deliver_channels(store, config, max_deliveries=25):
         for alert_id, alert in store.channel_pending(channel, max_deliveries):
             try:
                 send(channel, alert, config)
-                store.channel_result(alert_id, channel)
-                save_state({"failures": 0, "next_attempt": 0})
-                state = {"failures": 0, "next_attempt": 0}
-                print(f"NOTIFIED {channel} alert #{alert_id}", flush=True)
 
             except Exception as exc:
-                error = str(exc)[:400]
+                error = str(exc)[:400] or type(exc).__name__
                 store.channel_result(alert_id, channel, error)
 
                 failures = int(state.get("failures", 0)) + 1
@@ -277,6 +273,11 @@ def deliver_channels(store, config, max_deliveries=25):
                     flush=True
                 )
                 return
+
+            store.channel_result(alert_id, channel)
+            save_state({"failures": 0, "next_attempt": 0})
+            state = {"failures": 0, "next_attempt": 0}
+            print(f"NOTIFIED {channel} alert #{alert_id}", flush=True)
 
 
 def run_self_test(store, timeout=75, sleep=time.sleep, monotonic=time.monotonic):
