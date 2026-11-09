@@ -37,8 +37,7 @@ def main():
                 event = Event('Microsoft-Windows-Windows Defender/Operational', record,
                               event_id, (start + timedelta(seconds=record)).isoformat(),
                               'Defender', message)
-                for alert in detector.process(event):
-                    store.save_alert(alert)
+                store.ingest_batch(event.channel, [event], detector)
             eligible = {a.evidence[-1]['record_id'] for _, a in store.channel_pending('email')}
             print(f'{len(TRACE)} synthetic records, {store.counts()[0]} stored by candidate')
             print('policy                 emails    TP    FP    FN')

@@ -40,6 +40,7 @@ def scan(store, detector, max_events, quiet=False):
         cursor = store.cursor(channel)
         try:
             events = fetch(channel, cursor, max_events=max_events)
+            alerts = store.ingest_batch(channel, events, detector)
         except Exception as exc:
             store.record_channel_check(channel, str(exc)[:400] or type(exc).__name__)
             failed.append(channel)
@@ -48,13 +49,10 @@ def scan(store, detector, max_events, quiet=False):
         store.record_channel_check(channel)
         if len(events) == max_events:
             print(f'INFO {channel}: reached {max_events} event cap; remaining matching events will be read in subsequent scans', file=sys.stderr)
-        for ev in events:
-            for alert in detector.process(ev):
-                store.save_alert(alert)
-                count += 1
-                if not quiet:
-                    print(json.dumps(asdict(alert)), flush=True)
-            store.advance(channel, ev.record_id)
+        count += len(alerts)
+        if not quiet:
+            for alert in alerts:
+                print(json.dumps(asdict(alert)), flush=True)
     return count, failed
 
 
@@ -63,7 +61,12 @@ def config_path():
 
 def load_config():
     path=config_path()
-    return json.loads(path.read_text(encoding='utf-8')) if path.exists() else None
+    if not path.exists():
+        return None
+    config = json.loads(path.read_text(encoding='utf-8'))
+    if not isinstance(config, dict):
+        raise ValueError('Expected a JSON object in notifications.json')
+    return config
 
 
 TASK_NAME = 'SentinelForge Security Monitor'
@@ -185,20 +188,28 @@ def agent():
             try:
                 while True:
                     try:
-                        config = load_config()
-                        if config and not load_gmail_credentials(config):
-                            print('Gmail credentials unavailable for this Windows user.', flush=True)
                         count, failed = scan(store, detector, 500, quiet=True)
-                        # Delivery must not stop because an unrelated event-log channel is temporarily unavailable.
-                        # Enqueued alerts and self-tests should still be retried.
-                        if config:
-                            deliver_channels(store, config)
-                        print(f'Scan complete: {count} alerts, {len(failed)} inaccessible channels', flush=True)
+                        print(f'Scan complete: {count} alerts, {len(failed)} failed channels', flush=True)
+                        deliver_configured_email(store)
                     except Exception:
                         traceback.print_exc()
                     time.sleep(10)
             finally:
                 store.db.close()
+
+
+def deliver_configured_email(store):
+    """Keep mail configuration and delivery errors out of the collection loop."""
+    try:
+        config = load_config()
+        if not config:
+            return
+        if not load_gmail_credentials(config):
+            print('Email paused: Gmail credentials unavailable.', file=sys.stderr, flush=True)
+            return
+        deliver_channels(store, config)
+    except Exception as exc:
+        print(f'Email paused: {type(exc).__name__}: {exc}', file=sys.stderr, flush=True)
 
 
 def task_action(command):
@@ -391,19 +402,23 @@ def main():
         for channel in CHANNELS:
             last, error = health.get(channel, (None, None))
             print(f'{channel}: last successful read {last or "none recorded"}'
-                  + (f' | unreadable: {error}' if error else ''))
+                  + (f' | last check failed: {error}' if error else ''))
         total, pending = store.counts()
         print(f'Alerts stored: {total}')
         print('Legacy undelivered counter:', pending, '(includes historical baseline-excluded alerts)')
-        config=load_config()
-        print('Notification mode:', config['mode'] if config else 'not configured')
+        try:
+            config = load_config()
+        except (ValueError, OSError) as exc:
+            config = None
+            print(f'Notification configuration error: {exc}', file=sys.stderr)
+        print('Notification mode:', config.get('mode', 'unknown') if config else 'unavailable')
         print('Gmail credentials available:', load_gmail_credentials(config) if config else False)
         if os.name == 'nt':
             try:
                 task_state = _powershell("(Get-ScheduledTask -TaskName 'SentinelForge Security Monitor' -ErrorAction Stop).State")
                 print('Background task:', task_state)
-            except Exception:
-                print('Background task: not installed')
+            except Exception as exc:
+                print(f'Background task status unavailable: {exc}')
         print('Historical notification baseline:', 'set' if store.is_baselined() else 'NOT SET')
         if config and store.is_baselined():
             for channel in enabled_channels(config): print(f'{channel} new undelivered:',store.channel_counts(channel))
@@ -444,10 +459,8 @@ def main():
         while True:
             count, failed = scan(store, detector, args.max_events, args.quiet)
             # Existing pending alerts can be delivered even when a Windows log cannot be read.
-            config = load_config()
-            load_gmail_credentials(config)
-            deliver_channels(store, config)
-            print(f'Scan complete: {count} alerts, {len(failed)} inaccessible channels', flush=True)
+            deliver_configured_email(store)
+            print(f'Scan complete: {count} alerts, {len(failed)} failed channels', flush=True)
             if args.command == 'scan':
                 if failed:
                     sys.exit(2)

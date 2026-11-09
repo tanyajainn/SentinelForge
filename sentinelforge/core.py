@@ -55,6 +55,7 @@ class Store:
         self.db.execute('CREATE TABLE IF NOT EXISTS notification_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS channel_health (channel TEXT PRIMARY KEY, checked_at TEXT NOT NULL, last_success TEXT, error TEXT)')
         self.db.execute('CREATE TABLE IF NOT EXISTS emailed_config_changes (fingerprint TEXT PRIMARY KEY, queued_at REAL NOT NULL)')
+        self.db.execute('CREATE TABLE IF NOT EXISTS detector_state (channel TEXT PRIMARY KEY, failures TEXT NOT NULL, last_burst TEXT)')
         self.db.commit()
 
     def is_baselined(self):
@@ -105,14 +106,55 @@ class Store:
     def save_alert(self, alert: Alert):
         # Commit evidence and its email decision together, even with two writers.
         with self.db:
-            cur = self.db.execute('INSERT INTO alerts(timestamp,severity,rule,payload) VALUES(?,?,?,?)',
-                                  (alert.timestamp, alert.severity, alert.rule, json.dumps(asdict(alert))))
-            alert_id = cur.lastrowid
-            if alert.rule == 'event-5007' and alert.evidence and self.is_baselined():
-                message = alert.evidence[0].get('message', '')
-                if message:
-                    self._group_config_email(alert_id, message)
+            return self._insert_alert(alert)
+
+    def _insert_alert(self, alert):
+        cur = self.db.execute('INSERT INTO alerts(timestamp,severity,rule,payload) VALUES(?,?,?,?)',
+                              (alert.timestamp, alert.severity, alert.rule, json.dumps(asdict(alert))))
+        alert_id = cur.lastrowid
+        if alert.rule == 'event-5007' and alert.evidence and self.is_baselined():
+            message = alert.evidence[0].get('message', '')
+            if message:
+                self._group_config_email(alert_id, message)
         return alert_id
+
+    def ingest_batch(self, channel, events, detector):
+        """Commit alerts, correlation history and cursor together for one channel."""
+        if not events:
+            return []
+        alerts = []
+        with self.db:
+            self.db.execute('BEGIN IMMEDIATE')
+            cursor = self.cursor(channel)
+            row = self.db.execute(
+                'SELECT failures,last_burst FROM detector_state WHERE channel=?',
+                (channel,)).fetchone()
+            # Restore committed history on every batch, including after rollback
+            # or when another scanner committed while this one was fetching.
+            detector.failures[channel] = deque(datetime.fromisoformat(value)
+                for value in json.loads(row[0])) if row else deque()
+            detector.last_burst.pop(channel, None)
+            if row and row[1]:
+                detector.last_burst[channel] = datetime.fromisoformat(row[1])
+            changed_history = False
+            for event in events:
+                if event.record_id <= cursor:
+                    continue
+                if event.channel != channel:
+                    raise ValueError(f'Unexpected event channel: {event.channel}')
+                new_alerts = detector.process(event)
+                for alert in new_alerts:
+                    self._insert_alert(alert)
+                alerts.extend(new_alerts)
+                changed_history |= event.event_id == 4625
+                cursor = event.record_id
+            if changed_history:
+                burst = detector.last_burst.get(channel)
+                history = [value.isoformat() for value in detector.failures[channel]]
+                self.db.execute('INSERT OR REPLACE INTO detector_state VALUES(?,?,?)',
+                                (channel, json.dumps(history), burst.isoformat() if burst else None))
+            self.db.execute('INSERT OR REPLACE INTO cursor VALUES(?,?)', (channel, cursor))
+        return alerts
 
     def _group_config_email(self, alert_id, message):
         # Only group identical Defender messages. Changed values get their own mail.

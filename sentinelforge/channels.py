@@ -75,6 +75,8 @@ def send_email(alert, config):
     ctx = ssl.create_default_context()
     errors = []
     for port in (465, 587):
+        submission_started = False
+        accepted = False
         try:
             if port == 465:
                 smtp = smtplib.SMTP_SSL(
@@ -91,11 +93,20 @@ def send_email(alert, config):
                     os.environ["SENTINELFORGE_GMAIL_FROM"],
                     os.environ["SENTINELFORGE_GMAIL_APP_PASSWORD"],
                 )
+                submission_started = True
                 server.send_message(msg)
+                accepted = True
             return
         except smtplib.SMTPAuthenticationError:
             raise
         except (OSError, EOFError, smtplib.SMTPException) as exc:
+            # QUIT can fail after Gmail has already accepted the message.
+            if accepted:
+                return
+            if submission_started:
+                # The final DATA response may have been lost. Leave the alert
+                # queued for normal backoff instead of immediately resending.
+                raise
             errors.append(f"{port}: {exc}")
     raise RuntimeError("SMTP delivery failed: " + "; ".join(errors))
 
