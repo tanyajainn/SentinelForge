@@ -79,3 +79,10 @@ and print to PDF for review. The report reads local SQLite in one read-only
 transaction. It summarizes stored alerts, self-tests, latest email states and
 the most recent check of each configured channel. Raw evidence and error messages
 stay out of the report. The evidence CSV is a separate investigation export.
+
+## Multi-endpoint reporting and response guidance
+
+The Security collector also monitors 4698, 4722, 4726 and 4740 when available.
+Alert emails identify the finding, first check, escalation condition and event
+reference. Use the [campus review workflow](docs/CAMPUS_REVIEW.md) to combine
+alias-labelled endpoint snapshots into a printable report without transferring raw logs.

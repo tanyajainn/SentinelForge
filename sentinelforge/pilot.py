@@ -6,6 +6,8 @@ from html import escape
 from pathlib import Path
 
 from .windows import CHANNELS
+from .channels import next_steps
+from .core import RULES
 
 
 def _table(headers, rows):
@@ -47,6 +49,12 @@ def pilot_report(db_path, start: date, end: date):
             WHERE date(a.timestamp) BETWEEN ? AND ?
             GROUP BY 1, 2 ORDER BY 1, 2
         """, (start.isoformat(), end.isoformat())).fetchall()
+        known = {f"event-{key}": title for key, (_, title) in RULES.items()}
+        actions = [(known.get(rule, "Other recorded rule"), n, *next_steps(rule))
+                   for rule, n in db.execute(
+                       "SELECT rule,COUNT(*) FROM alerts WHERE date(timestamp) BETWEEN ? AND ? "
+                       "AND rule != 'sentinelforge-self-test' GROUP BY rule ORDER BY COUNT(*) DESC,rule",
+                       (start.isoformat(), end.isoformat()))]
         invalid = db.execute("SELECT COUNT(*) FROM alerts WHERE date(timestamp) IS NULL").fetchone()[0]
         health = {name: (checked, success, error) for name, checked, success, error in
                   db.execute("SELECT channel, checked_at, last_success, error IS NOT NULL FROM channel_health")}
@@ -75,6 +83,7 @@ Generated {generated} UTC.</p><h2>Stored alerts</h2>
 Sent means SMTP submission. Inbox arrival requires recipient confirmation.
 Unrecorded includes historical alerts without an email state.</p>
 <p>Across the database, {invalid} alerts have an unparseable date and are excluded from date totals.</p>
+<h2>Findings and next steps</h2>{_table(["Finding", "Alerts", "Check first", "When to escalate"], actions) if actions else "<p>No rule alerts in the selected period.</p>"}
 <h2>Collection health at the latest recorded check</h2>{channels}
 <p>Check timestamps show how recent each observation is. Historical uptime, confirmed
 incidents, missed events and field accuracy require separate measurements.</p></html>"""

@@ -1,3 +1,4 @@
+from contextlib import closing
 import csv
 import sqlite3
 import tempfile
@@ -39,7 +40,7 @@ class DashboardExportTests(unittest.TestCase):
     def test_failed_export_preserves_previous_report(self):
         output = self.folder / "report.csv"
         output.write_bytes(b"previous report")
-        with sqlite3.connect(self.db) as conn:
+        with closing(sqlite3.connect(self.db)) as conn, conn:
             conn.execute("DROP TABLE notification_state")
         files = set(self.folder.iterdir())
         with self.assertRaises(sqlite3.Error):
