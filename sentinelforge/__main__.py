@@ -374,7 +374,11 @@ def main():
         return
     if args.command == 'export-csv':
         from .reporting import export_csv
-        output, count = export_csv(args.db, severity=args.severity, email_status=args.email_status)
+        import sqlite3
+        try:
+            output, count = export_csv(args.db, severity=args.severity, email_status=args.email_status)
+        except (OSError, sqlite3.Error, ValueError) as error:
+            parser.exit(1, f'Unable to export CSV: {error}\n')
         print(f'Exported {count} evidence rows to: {output}')
         print('Source database unchanged.')
         return
@@ -386,6 +390,7 @@ def main():
 
         address = 'http://127.0.0.1:8765'
         server = ThreadingHTTPServer(('127.0.0.1', 8765), Handler)
+        server.db_path = Path(args.db)
         print(f'SentinelForge dashboard: {address}', flush=True)
         webbrowser.open(address)
         try:

@@ -1,36 +1,35 @@
 ﻿"""SentinelForge local security dashboard."""
 
 import html
-import json
+from sentinelforge.reporting import alert_details
 import sqlite3
 from collections import Counter
-from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
 
 DB = Path.home() / "SentinelForgeData" / "events.sqlite3"
-LOG = Path.home() / "SentinelForgeData" / "monitor.log"
 
-def get_data():
+
+def get_data(db_path=DB):
+    db_path = Path(db_path)
+    log = db_path.with_name("monitor.log")
     alerts = []
     counts = Counter()
     delivered = 0
     baseline = 0
 
-    if DB.exists():
-        con = sqlite3.connect(f"file:{DB.as_posix()}?mode=ro", uri=True, timeout=5)
+    if db_path.is_file():
+        con = sqlite3.connect(db_path.resolve().as_uri() + "?mode=ro", uri=True, timeout=5)
         try:
+            con.execute("BEGIN")
             rows = con.execute(
                 "SELECT id, timestamp, severity, rule, payload "
                 "FROM alerts ORDER BY id DESC LIMIT 100"
             ).fetchall()
 
             for id_, timestamp, severity, rule, payload in rows:
-                try:
-                    details = json.loads(payload)
-                except (ValueError, TypeError):
-                    details = {}
+                details = alert_details(payload)
 
                 alerts.append({
                     "id": id_,
@@ -52,7 +51,12 @@ def get_data():
         finally:
             con.close()
 
-    recent_log = LOG.read_text(encoding="utf-8", errors="replace").splitlines()[-30:] if LOG.exists() else []
+    recent_log = []
+    if log.is_file():
+        with log.open("rb") as stream:
+            size = stream.seek(0, 2)
+            stream.seek(max(0, size - 65536))
+            recent_log = stream.read(65536).decode("utf-8", errors="replace").splitlines()[-30:]
     last_scan = next(
         (line for line in reversed(recent_log) if "Scan complete:" in line),
         "No scan recorded"
@@ -60,8 +64,10 @@ def get_data():
 
     return alerts, counts, delivered, last_scan
 
-def render():
-    alerts, counts, delivered, last_scan = get_data()
+def render(db_path=DB):
+    if not Path(db_path).is_file():
+        raise FileNotFoundError("Monitor database unavailable")
+    alerts, counts, delivered, last_scan = get_data(db_path)
     total = sum(counts.values())
 
     rows = "".join(
@@ -156,7 +162,10 @@ class Handler(BaseHTTPRequestHandler):
             self.send_error(404)
             return
         try:
-            body = render().encode("utf-8")
+            body = render(getattr(self.server, "db_path", DB)).encode("utf-8")
+        except (OSError, sqlite3.Error):
+            self.send_error(503, "Monitor database or log unavailable")
+            return
         except Exception:
             self.send_error(500, "Dashboard data unavailable")
             return
