@@ -350,10 +350,16 @@ def main():
     parser.add_argument('--interval', type=int, default=60, help='watch polling interval in seconds (minimum 30)')
     parser.add_argument('--max-events', type=int, default=500)
     parser.add_argument('--quiet', action='store_true')
+    parser.add_argument('--severity', choices=['info', 'low', 'medium', 'high', 'critical'],
+                        help='export only alerts of this severity')
+    parser.add_argument('--email-status', choices=['sent', 'failed', 'grouped', 'not_recorded'],
+                        help='export only alerts with this recorded email status')
     args = parser.parse_args()
+    if args.command != 'export-csv' and (args.severity or args.email_status):
+        parser.error('--severity and --email-status require export-csv')
     if args.command == 'export-csv':
         from .reporting import export_csv
-        output, count = export_csv(args.db)
+        output, count = export_csv(args.db, severity=args.severity, email_status=args.email_status)
         print(f'Exported {count} evidence rows to: {output}')
         print('Source database unchanged.')
         return

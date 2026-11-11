@@ -34,7 +34,7 @@ def spreadsheet_safe(value):
     return value
 
 
-def export_csv(db_path, output_path=None):
+def export_csv(db_path, output_path=None, *, severity=None, email_status=None):
     db_path = Path(db_path)
 
     if not db_path.is_file():
@@ -66,8 +66,18 @@ def export_csv(db_path, output_path=None):
             FROM alerts a
             LEFT JOIN notification_state n
                 ON n.alert_id = a.id AND n.channel = 'email'
-            ORDER BY a.id
         """
+        conditions = []
+        parameters = []
+        if severity is not None:
+            conditions.append("a.severity = ?")
+            parameters.append(severity)
+        if email_status is not None:
+            conditions.append("COALESCE(n.status, 'not_recorded') = ?")
+            parameters.append(email_status)
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+        query += " ORDER BY a.id"
 
         with output_path.open("w", newline="", encoding="utf-8-sig") as f:
             writer = csv.DictWriter(f, fieldnames=FIELDS)
@@ -76,7 +86,7 @@ def export_csv(db_path, output_path=None):
             for (
                 alert_id, timestamp, severity, rule, payload,
                 email_status, attempts, updated_at
-            ) in connection.execute(query):
+            ) in connection.execute(query, parameters):
 
                 try:
                     details = json.loads(payload)
