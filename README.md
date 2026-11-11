@@ -58,7 +58,7 @@ After migration, use the protected CLI beside the scheduled agent for status and
 - Windows Defender Operational: 1116 detection, 1117 remediation, 1118 remediation failure, 5007 selected configuration changes, 5001 real-time protection disabled, 5013 tamper protection blocked a change.
 - 4624 successful sign-ins are collected but not alerted on by default due to high noise.
 
-**Limitations:** Not all Windows editions expose all events to a standard user. No ETW kernel sensor, malware sandbox, memory scanner, behavioral model, tamper protection, or threat prevention is included. Failed logon bursts are aggregated per channel, not by username or source IP; correlation is volatile across restarts. Detection depends on Windows auditing, log retention, adequate privileges, and event volume. `0 alerts` means no configured rule fired, **not that the machine is clean**.
+**Limitations:** Not all Windows editions expose all events to a standard user. No ETW kernel sensor, malware sandbox, memory scanner, behavioral model, tamper protection, or threat prevention is included. Failed logon bursts are aggregated per channel, not by username or source IP. SQLite stores correlation history and the channel cursor across collector restarts. Detection depends on Windows auditing, log retention, adequate privileges, and event volume. `0 alerts` means no configured rule fired, **not that the machine is clean**.
 
 ## Privacy and credentials
 
@@ -69,3 +69,13 @@ Event evidence remains locally in `%USERPROFILE%\SentinelForgeData\events.sqlite
 Run `python -m unittest discover -s tests -v`. On Windows verify background task startup after logon, read permissions for all three channels, a benign audit event that is expected to fire a rule, and `SentinelForge self-test` followed by checking the recipient inbox. The `self-test` creates a persistent clearly labelled test alert; it does not fake a Security Event Log entry, simulate an intrusion, or prove event collection works.
 
 See `docs/THREAT_MODEL.md`, `docs/RESEARCH_PROTOCOL.md`, `docs/RELEASE_CHECKLIST.md` for test design and disclosure boundaries.
+
+## Faculty pilot report
+
+From the source checkout, run
+`python -m sentinelforge pilot-report --from-date 2026-11-01 --to-date 2026-11-11`
+with the desired inclusive UTC dates. Open the printed HTML path in a browser
+and print to PDF for review. The report reads local SQLite in one read-only
+transaction. It summarizes stored alerts, self-tests, latest email states and
+the most recent check of each configured channel. Raw evidence and error messages
+stay out of the report. The evidence CSV is a separate investigation export.
