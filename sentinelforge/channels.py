@@ -98,18 +98,48 @@ PREVENTION = {
     'event-4719': 'Forward security events to a separate collector and restrict who can change audit policy or clear logs.',
 }
 
+INCIDENT_OUTCOMES = {
+    'event-4625': 'Windows rejected these sign-ins. They may involve different accounts or devices. No later successful login has been linked.',
+    'event-1116': 'Defender detected a threat. This record does not establish whether the item ran or was quarantined.',
+    'event-1117': "Defender recorded a remediation action. The laptop's current protection status is unknown from this record alone.",
+    'event-1118': 'Defender reported an error during remediation. This record does not confirm a successful retry.',
+    'event-5001': 'Real-time protection was disabled at the recorded time. This event does not show when it resumed.',
+    'event-5007': 'A Defender setting changed. Whether protection was weakened depends on the old and new values.',
+    'event-5013': "Defender blocked the attempted settings change. The initiating person's intent is unknown.",
+    'event-4698': 'Windows registered a scheduled task. This event does not show that its program ran.',
+    'event-4697': 'Windows recorded a service installation. Whether the service ran or was authorized requires separate evidence.',
+    'event-7045': 'Windows recorded a service installation. Whether the service ran or was authorized requires separate evidence.',
+    'event-4720': 'Windows created an account. This event does not establish that anyone signed in with it.',
+    'event-4722': 'Windows enabled an account. Subsequent use is unknown.',
+    'event-4726': 'Windows deleted an account. The record alone does not establish why the deletion was authorized.',
+    'event-4740': 'Windows locked the account. Saved credentials, typing mistakes, or password guessing can cause this pattern.',
+    'event-4728': 'Windows added a member to a global security group. Subsequent use of that access is unknown.',
+    'event-4732': 'Windows added a member to a local security group. Subsequent use of that access is unknown.',
+    'event-1102': 'The local Security log was cleared. Previously forwarded copies may still exist.',
+    'event-4719': 'Windows changed its audit policy. The effect on future logging depends on which settings changed.',
+}
+
 def format_alert(alert):
     if alert.rule == 'sentinelforge-self-test':
         return '[SentinelForge TEST] Email delivery check', f'Test email from the background agent.\nTime: {alert.timestamp}'
     title = ' '.join(alert.title.split())
     subject = f'[SentinelForge {alert.severity.upper()}] {title}'[:180]
     action, follow = next_steps(alert.rule)
-    lines = [f'{title}.', '', action, follow, '', f'Time: {alert.timestamp}']
     evidence = alert.evidence[-1] if alert.evidence else {}
+    outcome = INCIDENT_OUTCOMES.get(alert.rule, 'No later outcome is available in this alert.')
+    if alert.rule == 'event-1117' and (evidence.get('action_name') or '').strip().lower() == 'quarantine':
+        outcome = 'Defender reported quarantining the affected item.'
+    lines = [f'What happened: {title}', f'Observed: {alert.timestamp}']
+    if evidence.get('first_failure_at'):
+        lines.append(f"First failure in this burst: {evidence['first_failure_at']}")
+    if evidence.get('detected_record'):
+        lines.append(f"Earlier detection: {evidence['detected_at']} (record {evidence['detected_record']}, same Defender detection ID)")
+    lines.extend(['', 'Recorded outcome: ' + outcome])
     if evidence.get('channel') and evidence.get('record_id') is not None:
         lines.append(f"Source: {evidence['channel']} | {alert.rule} | record {evidence['record_id']}")
     else:
         lines.append(f'Rule: {alert.rule}')
+    lines.extend(['', 'What to check: ' + action, follow])
     if alert.rule in PREVENTION:
         lines.extend(["", "Prevention: " + PREVENTION[alert.rule]])
     return subject, '\n'.join(lines)

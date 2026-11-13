@@ -39,6 +39,8 @@ class Event:
     timestamp: str
     provider: str
     message: str
+    detection_id: str | None = None
+    action_name: str | None = None
 
 @dataclass
 class Alert:
@@ -52,6 +54,7 @@ class Store:
     def __init__(self, path: str):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(path)
+        self.db.execute('CREATE TABLE IF NOT EXISTS defender_detections (detection_id TEXT PRIMARY KEY, record_id INTEGER NOT NULL, observed TEXT NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS cursor (channel TEXT PRIMARY KEY, record_id INTEGER NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS alerts (id INTEGER PRIMARY KEY, timestamp TEXT, severity TEXT, rule TEXT, payload TEXT)')
         self.db.execute('CREATE TABLE IF NOT EXISTS delivery (alert_id INTEGER PRIMARY KEY, sent_at TEXT, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT, FOREIGN KEY(alert_id) REFERENCES alerts(id))')
@@ -148,6 +151,16 @@ class Store:
                     raise ValueError(f'Unexpected event channel: {event.channel}')
                 new_alerts = detector.process(event)
                 for alert in new_alerts:
+                    key = (event.detection_id or '').strip().lower()
+                    if key and event.event_id == 1116:
+                        self.db.execute('INSERT OR REPLACE INTO defender_detections VALUES (?, ?, ?)',
+                                        (key, event.record_id, event.timestamp))
+                    elif key and event.event_id in (1117, 1118):
+                        prior = self.db.execute(
+                            'SELECT record_id, observed FROM defender_detections WHERE detection_id=? AND record_id < ?',
+                            (key, event.record_id)).fetchone()
+                        if prior:
+                            alert.evidence[0].update(detected_record=prior[0], detected_at=prior[1])
                     self._insert_alert(alert)
                 alerts.extend(new_alerts)
                 changed_history |= event.event_id == 4625
@@ -223,5 +236,6 @@ class Detector:
             if last and now - last < self.window:
                 return []
             self.last_burst[event.channel] = now
+            evidence[0]['first_failure_at'] = q[0].isoformat()
             severity, title = 'high', f'{len(q)} failed logons in {int(self.window.total_seconds()/60)} minutes'
         return [Alert(f'event-{event.event_id}', severity, title, event.timestamp, evidence)]
