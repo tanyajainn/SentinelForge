@@ -26,7 +26,14 @@ $events = @(Get-WinEvent -LogName '{channel}' -FilterXPath '{xpath}' -Oldest -Ma
     [Console]::Error.WriteLine($_.Exception.Message)
     exit 1
 }}
-@($events | ForEach-Object {{ [pscustomobject]@{{channel=$_.LogName;record_id=[long]$_.RecordId;event_id=[int]$_.Id;timestamp=$_.TimeCreated.ToUniversalTime().ToString('o');provider=$_.ProviderName;message=($_.Message | Out-String).Trim()}} }}) | ConvertTo-Json -Depth 4 -Compress
+@($events | ForEach-Object {{
+$fields = @{{}}
+if ($_.Id -in 1116,1117,1118) {{
+    foreach ($node in ([xml]$_.ToXml()).Event.EventData.Data) {{
+        $fields[$node.GetAttribute('Name')] = $node.InnerText
+    }}
+}}
+[pscustomobject]@{{detection_id=$fields['Detection ID'];action_name=$fields['Action Name'];channel=$_.LogName;record_id=[long]$_.RecordId;event_id=[int]$_.Id;timestamp=$_.TimeCreated.ToUniversalTime().ToString('o');provider=$_.ProviderName;message=($_.Message | Out-String).Trim()}} }}) | ConvertTo-Json -Depth 4 -Compress
 '''
     p = subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',ps],
                        capture_output=True, text=True, timeout=90,
