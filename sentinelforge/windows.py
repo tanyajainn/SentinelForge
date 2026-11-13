@@ -5,7 +5,7 @@ import subprocess
 from .core import Event
 
 CHANNELS = {
-    'Security': [4625, 4624, 4720, 4728, 4732, 4697, 1102, 4719],
+    'Security': [4625, 4624, 4720, 4728, 4732, 4697, 1102, 4719, 4698, 4722, 4726, 4740],
     'System': [7045],
     'Microsoft-Windows-Windows Defender/Operational': [1116, 1117, 1118, 5001, 5007, 5013],
 }

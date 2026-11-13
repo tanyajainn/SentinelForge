@@ -3,6 +3,8 @@
 import csv
 import json
 import sqlite3
+import os
+from tempfile import NamedTemporaryFile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -23,6 +25,14 @@ FIELDS = [
     "email_attempts",
     "email_updated_at",
 ]
+
+
+def alert_details(payload):
+    try:
+        details = json.loads(payload)
+    except (ValueError, TypeError):
+        return {}
+    return details if isinstance(details, dict) else {}
 
 
 def spreadsheet_safe(value):
@@ -49,6 +59,10 @@ def export_csv(db_path, output_path=None, *, severity=None, email_status=None):
         output_path = folder / f"SentinelForge-Alerts-{timestamp}.csv"
 
     output_path = Path(output_path)
+    database = db_path.resolve()
+    reserved = {database, *(Path(str(database) + suffix) for suffix in ("-wal", "-shm", "-journal"))}
+    if output_path.resolve() in reserved or (output_path.exists() and output_path.samefile(database)):
+        raise ValueError("CSV destination conflicts with the source database")
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Read-only database connection. Never update historical alerts.
@@ -57,6 +71,7 @@ def export_csv(db_path, output_path=None, *, severity=None, email_status=None):
     connection.execute("PRAGMA query_only=ON")
 
     count = 0
+    temporary = None
 
     try:
         query = """
@@ -79,7 +94,9 @@ def export_csv(db_path, output_path=None, *, severity=None, email_status=None):
             query += " WHERE " + " AND ".join(conditions)
         query += " ORDER BY a.id"
 
-        with output_path.open("w", newline="", encoding="utf-8-sig") as f:
+        with NamedTemporaryFile(mode="w", newline="", encoding="utf-8-sig",
+                               dir=output_path.parent, delete=False) as f:
+            temporary = Path(f.name)
             writer = csv.DictWriter(f, fieldnames=FIELDS)
             writer.writeheader()
 
@@ -88,12 +105,12 @@ def export_csv(db_path, output_path=None, *, severity=None, email_status=None):
                 email_status, attempts, updated_at
             ) in connection.execute(query, parameters):
 
-                try:
-                    details = json.loads(payload)
-                except (ValueError, TypeError):
-                    details = {}
-
-                evidence = details.get("evidence") or [{}]
+                details = alert_details(payload)
+                evidence = details.get("evidence")
+                if isinstance(evidence, dict):
+                    evidence = [evidence]
+                if not isinstance(evidence, list) or not evidence:
+                    evidence = [{}]
 
                 for event in evidence:
                     if not isinstance(event, dict):
@@ -121,7 +138,10 @@ def export_csv(db_path, output_path=None, *, severity=None, email_status=None):
                         for key, value in row.items()
                     })
                     count += 1
+        os.replace(temporary, output_path)
     finally:
         connection.close()
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
     return output_path, count

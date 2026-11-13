@@ -344,7 +344,7 @@ def run_self_test(store, timeout=75, sleep=time.sleep, monotonic=time.monotonic)
 
 def main():
     parser = argparse.ArgumentParser(description='SentinelForge: local Windows detection and email alerting')
-    parser.add_argument('command', nargs='?', default='status', choices=['export-csv','dashboard','scan','watch','demo','status','notify-pending','setup','baseline-notifications','agent','start','stop','uninstall','self-test'])
+    parser.add_argument('command', nargs='?', default='status', choices=['pilot-report','export-csv','dashboard','scan','watch','demo','status','notify-pending','setup','baseline-notifications','agent','start','stop','uninstall','self-test'])
     parser.add_argument('--db', default=str(Path.home() / 'SentinelForgeData' / 'events.sqlite3'))
     parser.add_argument('--threshold', type=int, default=5)
     parser.add_argument('--interval', type=int, default=60, help='watch polling interval in seconds (minimum 30)')
@@ -354,12 +354,31 @@ def main():
                         help='export only alerts of this severity')
     parser.add_argument('--email-status', choices=['sent', 'failed', 'grouped', 'not_recorded'],
                         help='export only alerts with this recorded email status')
+    from datetime import date
+    parser.add_argument('--from-date', type=date.fromisoformat, help='first UTC alert date (YYYY-MM-DD)')
+    parser.add_argument('--to-date', type=date.fromisoformat, help='last UTC alert date (YYYY-MM-DD)')
     args = parser.parse_args()
+    if args.command != 'pilot-report' and (args.from_date or args.to_date):
+        parser.error('--from-date and --to-date require pilot-report')
     if args.command != 'export-csv' and (args.severity or args.email_status):
         parser.error('--severity and --email-status require export-csv')
+    if args.command == 'pilot-report':
+        import sqlite3
+        from .pilot import pilot_report
+        if not args.from_date or not args.to_date or args.from_date > args.to_date:
+            parser.error('pilot-report requires --from-date and --to-date in chronological order')
+        try:
+            print(pilot_report(args.db, args.from_date, args.to_date))
+        except (OSError, sqlite3.Error) as error:
+            parser.exit(1, f'Unable to generate report: {error}\n')
+        return
     if args.command == 'export-csv':
         from .reporting import export_csv
-        output, count = export_csv(args.db, severity=args.severity, email_status=args.email_status)
+        import sqlite3
+        try:
+            output, count = export_csv(args.db, severity=args.severity, email_status=args.email_status)
+        except (OSError, sqlite3.Error, ValueError) as error:
+            parser.exit(1, f'Unable to export CSV: {error}\n')
         print(f'Exported {count} evidence rows to: {output}')
         print('Source database unchanged.')
         return
@@ -371,6 +390,7 @@ def main():
 
         address = 'http://127.0.0.1:8765'
         server = ThreadingHTTPServer(('127.0.0.1', 8765), Handler)
+        server.db_path = Path(args.db)
         print(f'SentinelForge dashboard: {address}', flush=True)
         webbrowser.open(address)
         try:

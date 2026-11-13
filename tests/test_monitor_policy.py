@@ -67,7 +67,8 @@ class MonitorPolicyTests(unittest.TestCase):
         self.assertIn('old and new', body)
         self.assertIn('event-5007 | record 18', body)
         self.assertNotIn('private account', body)
-        self.assertLessEqual(len(body.splitlines()), 3)
+        self.assertIn('maintenance record', body)
+        self.assertLess(len(body), 600)
 
     def test_self_test_and_legacy_alerts(self):
         subject, body = format_alert(Alert('sentinelforge-self-test', 'info', 'test', 'now', []))
