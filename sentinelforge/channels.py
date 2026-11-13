@@ -77,6 +77,27 @@ def next_steps(rule):
     return first, follow
 
 
+PREVENTION = {
+    'event-4625': 'Restrict remote sign-in access and enable MFA on the remote access service where supported.',
+    'event-4740': 'Restrict remote sign-in access and enable MFA on the remote access service where supported.',
+    'event-1116': 'Keep Defender security intelligence current and check the affected device for missing security updates.',
+    'event-1117': 'Keep Defender security intelligence current and check the affected device for missing security updates.',
+    'event-1118': 'Keep Defender security intelligence current and check the affected device for missing security updates.',
+    'event-5001': 'Enable Defender tamper protection and limit who can change protection settings.',
+    'event-5007': 'Enable Defender tamper protection and limit who can change protection settings.',
+    'event-5013': 'Enable Defender tamper protection and limit who can change protection settings.',
+    'event-4720': 'Limit account and group administration to designated admins and review privileged membership regularly.',
+    'event-4722': 'Limit account and group administration to designated admins and review privileged membership regularly.',
+    'event-4726': 'Limit account and group administration to designated admins and review privileged membership regularly.',
+    'event-4728': 'Limit account and group administration to designated admins and review privileged membership regularly.',
+    'event-4732': 'Limit account and group administration to designated admins and review privileged membership regularly.',
+    'event-4697': 'Review who can install services or register privileged tasks and remove unnecessary access.',
+    'event-7045': 'Review who can install services or register privileged tasks and remove unnecessary access.',
+    'event-4698': 'Review who can install services or register privileged tasks and remove unnecessary access.',
+    'event-1102': 'Forward security events to a separate collector and restrict who can change audit policy or clear logs.',
+    'event-4719': 'Forward security events to a separate collector and restrict who can change audit policy or clear logs.',
+}
+
 def format_alert(alert):
     if alert.rule == 'sentinelforge-self-test':
         return '[SentinelForge TEST] Email delivery check', f'Test email from the background agent.\nTime: {alert.timestamp}'
@@ -89,6 +110,8 @@ def format_alert(alert):
         lines.append(f"Source: {evidence['channel']} | {alert.rule} | record {evidence['record_id']}")
     else:
         lines.append(f'Rule: {alert.rule}')
+    if alert.rule in PREVENTION:
+        lines.extend(["", "Prevention: " + PREVENTION[alert.rule]])
     return subject, '\n'.join(lines)
 
 
