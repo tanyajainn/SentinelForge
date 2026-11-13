@@ -1,4 +1,4 @@
-﻿"""SentinelForge email notifications using Gmail SMTP."""
+"""SentinelForge email notifications using Gmail SMTP."""
 
 import os
 import smtplib
@@ -120,6 +120,34 @@ INCIDENT_OUTCOMES = {
 }
 
 def format_alert(alert):
+    if alert.rule in {"monitor-outage", "monitor-recovery"}:
+        detail = alert.evidence[0]
+        channel = detail["channel"]
+        impact = {
+            "Security": "Sign-in, account and audit-policy alerts may be delayed.",
+            "System": "System-log service installation alerts may be delayed.",
+            "Microsoft-Windows-Windows Defender/Operational":
+                "Defender detection and remediation alerts may be delayed.",
+        }.get(channel, "Alerts based on this log may be delayed.")
+        subject = f"[SentinelForge {alert.severity.upper()}] {alert.title}"
+        if alert.rule == "monitor-outage":
+            body = (
+                f"SentinelForge could not read {channel} on three consecutive checks.\n"
+                f"First failure: {detail['started']}\n"
+                f"Last successful read: {detail.get('last_success') or 'none recorded'}\n\n"
+                f"Impact: {impact}\n"
+                "Next step: Run SentinelForge status and review the error for this channel. "
+                "If it says access denied, check the task account's read permission for that log."
+            )
+        else:
+            body = (
+                f"SentinelForge successfully read {channel} again.\n"
+                f"First failure: {detail['started']}\nRead restored: {alert.timestamp}\n\n"
+                "Monitoring has resumed. Records that expired from Windows during the outage "
+                "may be unavailable."
+            )
+        return subject, body
+
     if alert.rule == 'sentinelforge-self-test':
         return '[SentinelForge TEST] Email delivery check', f'Test email from the background agent.\nTime: {alert.timestamp}'
     title = ' '.join(alert.title.split())
@@ -150,9 +178,16 @@ def send_email(alert, config):
 
     msg = EmailMessage()
     msg["From"] = os.environ["SENTINELFORGE_GMAIL_FROM"]
-    msg["To"] = config["email_to"]
+    import sys
+    from importlib.util import find_spec
+    if getattr(sys, "frozen", False) and find_spec("sentinelforge._local_mail_policy") is not None:
+        from ._local_mail_policy import RECIPIENT
+        msg["To"] = RECIPIENT
+    else:
+        msg["To"] = config["email_to"]
     subject, body = format_alert(alert)
-    msg["Subject"] = subject
+    host = os.environ.get("COMPUTERNAME") or "Windows laptop"
+    msg["Subject"] = f"{subject} | {host}"
     msg.set_content(body)
 
     ctx = ssl.create_default_context()

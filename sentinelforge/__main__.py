@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 import argparse
 import json
 import os
@@ -201,7 +201,12 @@ def agent():
 def deliver_configured_email(store):
     """Keep mail configuration and delivery errors out of the collection loop."""
     try:
-        config = load_config()
+        from importlib.util import find_spec
+        if getattr(sys, 'frozen', False) and find_spec("sentinelforge._local_mail_policy") is not None:
+            from ._local_mail_policy import RECIPIENT, SENDER
+            config = {'mode': 'email', 'email_to': RECIPIENT, 'gmail_from': SENDER}
+        else:
+            config = load_config()
         if not config:
             return
         if not load_gmail_credentials(config):

@@ -101,6 +101,35 @@ class Store:
                 "checked_at=excluded.checked_at, last_success=COALESCE(excluded.last_success, channel_health.last_success), "
                 "error=excluded.error",
                 (channel, now, now if error is None else None, error))
+            self.db.execute(
+                "CREATE TABLE IF NOT EXISTS monitor_outages "
+                "(channel TEXT PRIMARY KEY, failures INTEGER NOT NULL, started TEXT NOT NULL)"
+            )
+            row = self.db.execute(
+                "SELECT failures, started FROM monitor_outages WHERE channel=?", (channel,)
+            ).fetchone()
+            if error is not None:
+                failures, started = (row[0] + 1, row[1]) if row else (1, now)
+                self.db.execute(
+                    "INSERT OR REPLACE INTO monitor_outages VALUES (?, ?, ?)",
+                    (channel, failures, started)
+                )
+                if failures == 3:
+                    last = self.db.execute(
+                        "SELECT last_success FROM channel_health WHERE channel=?", (channel,)
+                    ).fetchone()[0]
+                    self._insert_alert(Alert(
+                        "monitor-outage", "high", f"Cannot read {channel}", now,
+                        [{"channel": channel, "started": started, "last_success": last}]
+                    ))
+            elif row:
+                if row[0] >= 3:
+                    self._insert_alert(Alert(
+                        "monitor-recovery", "info", f"Monitoring restored for {channel}", now,
+                        [{"channel": channel, "started": row[1]}]
+                    ))
+                self.db.execute("DELETE FROM monitor_outages WHERE channel=?", (channel,))
+
 
     def cursor(self, channel: str) -> int:
         row = self.db.execute('SELECT record_id FROM cursor WHERE channel=?', (channel,)).fetchone()
