@@ -1,0 +1,26 @@
+name: SentinelForge Research Engine CI
+on:
+  push:
+    paths:
+      - 'sf_research/**'
+      - 'tests/test_research.py'
+      - '.github/workflows/research-engine.yml'
+  pull_request:
+    paths:
+      - 'sf_research/**'
+      - 'tests/test_research.py'
+      - '.github/workflows/research-engine.yml'
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.11', '3.13']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m unittest discover -s tests -p test_research.py -v

@@ -1,0 +1,3 @@
+{"event_id":"e1","timestamp":"2026-01-01T00:00:00Z","host_id":"demo-win","os":"windows","kind":"process","source":"synthetic","attributes":{"name":"powershell.exe","parent_name":"winword.exe"}}
+{"event_id":"e2","timestamp":"2026-01-01T00:00:02Z","host_id":"demo-mac","os":"macos","kind":"file","source":"synthetic","attributes":{"path":"/tmp/sample","action":"created"}}
+{"event_id":"e3","timestamp":"2026-01-01T00:00:04Z","host_id":"demo-mac","os":"macos","kind":"process","source":"synthetic","attributes":{"name":"sample","path":"/tmp/sample"}}
