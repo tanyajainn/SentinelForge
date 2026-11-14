@@ -1,0 +1,13 @@
+﻿EMAIL QUEUED alert #1; SMTP retry paused for 5 minutes. Reason: EOFError
+DRY RUN ONLY: would block inbound traffic from 8.8.8.8. No firewall changes.
+Source IP must be independently verified; failed-logon counts alone are insufficient.
+
+ERROR Security: Invalid isoformat string: 'invalid'
+Email paused: JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+Email paused: ValueError: Expected a JSON object in notifications.json
+ERROR Security: access denied
+----------------------------------------------------------------------
+Ran 70 tests in 2.747s
+
+OK
+

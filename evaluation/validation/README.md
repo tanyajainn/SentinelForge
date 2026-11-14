@@ -1,42 +1,45 @@
-﻿# SentinelForge — RIT Demonstration
+﻿# SentinelForge — Security Validation
 
-## Project
-Windows endpoint security monitoring and experimental
-multi-signal threat analysis.
+## Overview
 
-## Demonstration
-1. Explain Windows event collection.
-2. Show existing threat alerts and evidence.
-3. Demonstrate offline authentication analysis.
-4. Demonstrate process, Defender and network indicators.
-5. Present v1 versus v2 benchmark results.
-6. Explain simulated containment and safety controls.
+SentinelForge is an independently developed Windows
+endpoint security monitoring and threat analysis project.
 
-## Current synthetic benchmark
-V1 precision: 60.0%
-V1 recall: 50.0%
+This directory contains reproducible validation artifacts
+for the experimental unified detection engine.
 
-V2 precision: 65.7%
-V2 recall: 63.9%
+## Components
 
-These results are from synthetic episodes and are
-not evidence of real-world detection accuracy.
+- Authentication detection comparison
+- Multi-signal security analysis output
+- Automated regression test results
+- Detection performance documentation
+
+## Synthetic Evaluation
+
+| Metric | V1 | V2 |
+|---|---:|---:|
+| Precision | 60.0% | 65.7% |
+| Recall | 50.0% | 63.9% |
+| F1 Score | 54.5% | 64.8% |
+
+These measurements come from 72 synthetic episodes.
+They do not establish real-world detection accuracy.
+
+## Development Status
+
+The unified detection engine is experimental.
+
+Planned development includes:
+
+- Live endpoint telemetry integration
+- Behavioral event correlation
+- Multi-endpoint monitoring
+- Independent detection validation
+- Approval-controlled incident response
 
 ## Safety
-No automatic firewall changes.
-No malware execution required.
-No live campus deployment.
-No real containment actions.
 
-## Future EDR Development
-- Authorized process and network telemetry collection
-- Multi-signal behavioral correlation
-- Centralized multi-endpoint visibility
-- Independent detection evaluation
-- Approval-gated response
-
-## Known Limitations
-Not a complete antivirus.
-Not a production EDR.
-Not a full SIEM.
-ML classifier not validated.
+No automatic firewall modifications.
+No production deployment is implied.
+No malware execution is required for validation.
