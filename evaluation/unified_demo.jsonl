@@ -1,0 +1,5 @@
+﻿{"type":"authentication","failures":22,"distinct_accounts":8,"logon_type":10,"known_service_account":false}
+{"type":"authentication","failures":10,"distinct_accounts":1,"logon_type":3,"known_service_account":true}
+{"type":"process","parent":"winword.exe","name":"powershell.exe","command_line":"powershell.exe -EncodedCommand EXAMPLE"}
+{"type":"defender","event_id":1116}
+{"type":"network","outbound_mb":1200,"baseline_mb":50,"new_destination":true,"sensitive_process":true}
