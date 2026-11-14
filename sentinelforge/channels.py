@@ -119,7 +119,82 @@ INCIDENT_OUTCOMES = {
     'event-4719': 'Windows changed its audit policy. The effect on future logging depends on which settings changed.',
 }
 
+
+def format_source_login_alert(alert):
+    """Create a privacy-conscious, investigation-first login alert."""
+    from .threat_assessment import assess
+
+    assessment = assess({
+        "rule": alert.rule,
+        "severity": alert.severity,
+        "timestamp": alert.timestamp,
+        "evidence": alert.evidence,
+    })
+
+    subject = f"[SentinelForge {alert.severity.upper()}] Suspicious failed logons"
+    evidence = alert.evidence[0] if alert.evidence and isinstance(alert.evidence[0], dict) else {}
+
+    lines = [
+        "Suspicious failed Windows sign-ins detected.",
+        f"Observed: {alert.timestamp}",
+        f"Source IP: {assessment.get('source_ip') or 'unverified'}",
+        f"Target account: {assessment.get('target_username') or 'not recorded'}",
+        f"Logon type: {assessment.get('logon_type') if assessment.get('logon_type') is not None else 'unknown'}",
+        f"First failure: {assessment.get('first_failure_at') or 'unknown'}",
+        f"Last failure: {assessment.get('last_failure_at') or 'unknown'}",
+        "",
+        "Assessment: " + assessment["classification"],
+        "Recorded outcome: Windows rejected the observed sign-ins. "
+        "This does not establish whether any later login succeeded.",
+        "",
+        "Recommended action: " + assessment["recommendation"],
+        "Firewall action: No automatic blocking. Independently verify the "
+        "source before considering a manually approved response.",
+    ]
+
+    if evidence.get("channel") and evidence.get("record_id") is not None:
+        lines.append(
+            f"Evidence reference: {evidence['channel']} | "
+            f"record {evidence['record_id']}"
+        )
+
+    if assessment.get('source_ip'):
+        from .threat_scoring import score_failed_logons
+
+        score = score_failed_logons(
+            assessment['source_ip'],
+            evidence.get('failure_count'),
+            assessment.get('logon_type'),
+            evidence.get('recurrence_windows'),
+        )
+
+        lines.extend([
+            "",
+            f"Threat priority score: {score.score}/100",
+            f"Priority level: {score.level}",
+            f"Evidence confidence: {score.confidence}",
+            f"Failed logins in window: {evidence.get('failure_count', 'unknown')}",
+            f"Recorded bursts in 24 hours: {evidence.get('recurrence_windows', 'unknown')}",
+            "Scoring reasons:",
+            *[f"- {reason}" for reason in score.reasons],
+        ])
+
+        if score.missing_evidence:
+            lines.append(
+                "Missing evidence: " + ", ".join(score.missing_evidence)
+            )
+
+        lines.append(
+            "Scores are heuristic investigation priorities, not attack probabilities."
+        )
+
+    return subject, "\n".join(lines)
+
+
 def format_alert(alert):
+    if alert.rule == "event-4625-source":
+        return format_source_login_alert(alert)
+
     if alert.rule in {"monitor-outage", "monitor-recovery"}:
         detail = alert.evidence[0]
         channel = detail["channel"]

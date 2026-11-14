@@ -1,0 +1,15 @@
+{
+  "events": 10000,
+  "batch_size": 500,
+  "elapsed_seconds": 0.1729,
+  "events_per_second": 57851.82,
+  "alerts_generated": 34,
+  "checks": {
+    "cursor_preserved": true,
+    "alerts_preserved": true,
+    "duplicate_replay_prevented": true,
+    "database_integrity": true
+  },
+  "all_checks_passed": true,
+  "dataset": "synthetic"
+}
