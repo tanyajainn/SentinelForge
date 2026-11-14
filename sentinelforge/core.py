@@ -205,6 +205,29 @@ class Store:
                             (key, event.record_id)).fetchone()
                         if prior:
                             alert.evidence[0].update(detected_record=prior[0], detected_at=prior[1])
+                    if alert.rule == 'event-4625-source':
+                        from .attribution import safe_source_ip
+                        source = safe_source_ip(
+                            alert.evidence[0].get('source_ip')
+                        )
+                        observed = datetime.fromisoformat(
+                            alert.timestamp.replace('Z', '+00:00')
+                        )
+                        if observed.tzinfo is None:
+                            observed = observed.replace(tzinfo=timezone.utc)
+                        cutoff = observed - timedelta(hours=24)
+                        prior = 0
+                        for (payload,) in self.db.execute(
+                            "SELECT payload FROM alerts "
+                            "WHERE rule='event-4625-source' "
+                            "AND timestamp >= ? AND timestamp < ?",
+                            (cutoff.isoformat(), observed.isoformat())
+                        ):
+                            saved = json.loads(payload)
+                            detail = (saved.get('evidence') or [{}])[0]
+                            if safe_source_ip(detail.get('source_ip')) == source:
+                                prior += 1
+                        alert.evidence[0]['recurrence_windows'] = prior + 1
                     self._insert_alert(alert)
                 alerts.extend(new_alerts)
                 if event.event_id == 4625:

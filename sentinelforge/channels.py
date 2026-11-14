@@ -158,6 +158,36 @@ def format_source_login_alert(alert):
             f"record {evidence['record_id']}"
         )
 
+    if assessment.get('source_ip'):
+        from .threat_scoring import score_failed_logons
+
+        score = score_failed_logons(
+            assessment['source_ip'],
+            evidence.get('failure_count'),
+            assessment.get('logon_type'),
+            evidence.get('recurrence_windows'),
+        )
+
+        lines.extend([
+            "",
+            f"Threat priority score: {score.score}/100",
+            f"Priority level: {score.level}",
+            f"Evidence confidence: {score.confidence}",
+            f"Failed logins in window: {evidence.get('failure_count', 'unknown')}",
+            f"Recorded bursts in 24 hours: {evidence.get('recurrence_windows', 'unknown')}",
+            "Scoring reasons:",
+            *[f"- {reason}" for reason in score.reasons],
+        ])
+
+        if score.missing_evidence:
+            lines.append(
+                "Missing evidence: " + ", ".join(score.missing_evidence)
+            )
+
+        lines.append(
+            "Scores are heuristic investigation priorities, not attack probabilities."
+        )
+
     return subject, "\n".join(lines)
 
 
