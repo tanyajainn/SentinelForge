@@ -1,4 +1,4 @@
-﻿"""SentinelForge v2: offline, explainable multi-signal security analysis.
+"""SentinelForge v2: offline, explainable multi-signal security analysis.
 
 Input: JSONL telemetry supplied by an authorized test environment.
 No collection, firewall, quarantine, or notification side effects.
@@ -141,6 +141,42 @@ def analyze(event: dict) -> Finding | None:
         ),
     )
 
+
+
+def analyze_authentication_with_fallback(event: dict, threshold: int = 5):
+    """Preserve legacy threshold detection when enrichment is unavailable.
+
+    Input must represent failures within the configured observation window.
+    This is an offline compatibility policy, not a new live detector.
+    """
+    if event.get("type") != "authentication":
+        return analyze(event)
+
+    finding = analyze(event)
+    if finding is not None:
+        return finding
+
+    if not isinstance(event.get("failures"), int):
+        return None
+
+    failures = event["failures"]
+    if failures < threshold:
+        return None
+
+    # Missing enrichment cannot justify suppressing an existing alert.
+    return Finding(
+        category="authentication",
+        severity="medium",
+        score=40,
+        reasons=[
+            f"{failures} failed logins meet legacy threshold {threshold}",
+            "Additional context is insufficient to establish malicious intent",
+        ],
+        recommended_action=(
+            "Investigate authentication history and account context. "
+            "Do not automatically block."
+        ),
+    )
 
 def evaluate_ml(path: Path):
     """Optional experimental classifier, never used for live response."""
