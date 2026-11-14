@@ -28,12 +28,12 @@ $events = @(Get-WinEvent -LogName '{channel}' -FilterXPath '{xpath}' -Oldest -Ma
 }}
 @($events | ForEach-Object {{
 $fields = @{{}}
-if ($_.Id -in 1116,1117,1118) {{
+if ($_.Id -in 4625,1116,1117,1118) {{
     foreach ($node in ([xml]$_.ToXml()).Event.EventData.Data) {{
         $fields[$node.GetAttribute('Name')] = $node.InnerText
     }}
 }}
-[pscustomobject]@{{detection_id=$fields['Detection ID'];action_name=$fields['Action Name'];channel=$_.LogName;record_id=[long]$_.RecordId;event_id=[int]$_.Id;timestamp=$_.TimeCreated.ToUniversalTime().ToString('o');provider=$_.ProviderName;message=($_.Message | Out-String).Trim()}} }}) | ConvertTo-Json -Depth 4 -Compress
+[pscustomobject]@{{source_ip=$fields['IpAddress'];target_username=$fields['TargetUserName'];logon_type=$fields['LogonType'];detection_id=$fields['Detection ID'];action_name=$fields['Action Name'];channel=$_.LogName;record_id=[long]$_.RecordId;event_id=[int]$_.Id;timestamp=$_.TimeCreated.ToUniversalTime().ToString('o');provider=$_.ProviderName;message=($_.Message | Out-String).Trim()}} }}) | ConvertTo-Json -Depth 4 -Compress
 '''
     p = subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',ps],
                        capture_output=True, text=True, timeout=90,
@@ -46,5 +46,14 @@ if ($_.Id -in 1116,1117,1118) {{
     rows = json.loads(raw)
     if isinstance(rows, dict):
         rows = [rows]
+    from .attribution import safe_source_ip, safe_logon_type
+    for r in rows:
+        if r['event_id'] == 4625:
+            r['source_ip'] = safe_source_ip(r.get('source_ip'))
+            r['logon_type'] = safe_logon_type(r.get('logon_type'))
+            r['target_username'] = (
+                str(r['target_username'])[:128]
+                if r.get('target_username') else None
+            )
     return [Event(**r) for r in rows]
 

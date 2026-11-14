@@ -41,6 +41,9 @@ class Event:
     message: str
     detection_id: str | None = None
     action_name: str | None = None
+    source_ip: str | None = None
+    target_username: str | None = None
+    logon_type: int | None = None
 
 @dataclass
 class Alert:
@@ -63,6 +66,7 @@ class Store:
         self.db.execute('CREATE TABLE IF NOT EXISTS channel_health (channel TEXT PRIMARY KEY, checked_at TEXT NOT NULL, last_success TEXT, error TEXT)')
         self.db.execute('CREATE TABLE IF NOT EXISTS emailed_config_changes (fingerprint TEXT PRIMARY KEY, queued_at REAL NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS detector_state (channel TEXT PRIMARY KEY, failures TEXT NOT NULL, last_burst TEXT)')
+        self.db.execute('CREATE TABLE IF NOT EXISTS source_failure_state (channel TEXT NOT NULL, source_ip TEXT NOT NULL, failures TEXT NOT NULL, last_burst TEXT, PRIMARY KEY(channel,source_ip))')
         self.db.commit()
 
     def is_baselined(self):
@@ -173,6 +177,17 @@ class Store:
             if row and row[1]:
                 detector.last_burst[channel] = datetime.fromisoformat(row[1])
             changed_history = False
+            # Restore per-IP state independently of legacy aggregate history.
+            detector.source_failures.clear()
+            detector.source_last_burst.clear()
+            for ip, history, burst in self.db.execute(
+                    'SELECT source_ip,failures,last_burst FROM source_failure_state WHERE channel=?',
+                    (channel,)):
+                detector.source_failures[(channel, ip)] = deque(
+                    datetime.fromisoformat(t) for t in json.loads(history))
+                if burst:
+                    detector.source_last_burst[(channel, ip)] = datetime.fromisoformat(burst)
+            changed_sources = set()
             for event in events:
                 if event.record_id <= cursor:
                     continue
@@ -192,13 +207,23 @@ class Store:
                             alert.evidence[0].update(detected_record=prior[0], detected_at=prior[1])
                     self._insert_alert(alert)
                 alerts.extend(new_alerts)
-                changed_history |= event.event_id == 4625
+                if event.event_id == 4625:
+                    if event.source_ip:
+                        changed_sources.add(event.source_ip)
+                    else:
+                        changed_history = True
                 cursor = event.record_id
             if changed_history:
                 burst = detector.last_burst.get(channel)
                 history = [value.isoformat() for value in detector.failures[channel]]
                 self.db.execute('INSERT OR REPLACE INTO detector_state VALUES(?,?,?)',
                                 (channel, json.dumps(history), burst.isoformat() if burst else None))
+            for ip in changed_sources:
+                key = (channel, ip)
+                burst = detector.source_last_burst.get(key)
+                history = [t.isoformat() for t in detector.source_failures[key]]
+                self.db.execute('INSERT OR REPLACE INTO source_failure_state VALUES(?,?,?,?)',
+                                (channel, ip, json.dumps(history), burst.isoformat() if burst else None))
             self.db.execute('INSERT OR REPLACE INTO cursor VALUES(?,?)', (channel, cursor))
         return alerts
 
@@ -237,6 +262,8 @@ class Detector:
         self.window = timedelta(minutes=window_minutes)
         self.failures = defaultdict(deque)
         self.last_burst = {}
+        self.source_failures = defaultdict(deque)
+        self.source_last_burst = {}
 
     def process(self, event: Event) -> list[Alert]:
         if event.event_id not in RULES:
@@ -254,7 +281,30 @@ class Detector:
         if event.event_id == 4624:
             return []  # high-volume successful logons need enrichment before alerting
         if event.event_id == 4625:
-            # Local aggregate; usernames/IPs should be extracted from event XML in future releases.
+            # Correlate attributable public IPv4 failures separately. Never
+            # mix different sources or unattributed failures into an IP burst.
+            if event.source_ip:
+                from .attribution import safe_source_ip
+                ip = safe_source_ip(event.source_ip)
+                if not ip:
+                    return []  # invalid/private/ambiguous IP cannot trigger an IP alert
+                key = (event.channel, ip)
+                q = self.source_failures[key]
+                q.append(now)
+                while q and now - q[0] > self.window:
+                    q.popleft()
+                if len(q) < self.threshold:
+                    return []
+                last = self.source_last_burst.get(key)
+                if last and now - last < self.window:
+                    return []
+                self.source_last_burst[key] = now
+                evidence[0]['first_failure_at'] = q[0].isoformat()
+                return [Alert('event-4625-source', 'high',
+                    f'{len(q)} failed logons from {ip} in {int(self.window.total_seconds()/60)} minutes',
+                    event.timestamp, evidence)]
+            # Preserve historical unattributed alerts for compatibility,
+            # but these must never be used for automatic firewall blocking.
             q = self.failures[event.channel]
             q.append(now)
             while q and now - q[0] > self.window:
