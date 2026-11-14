@@ -1,0 +1,1304 @@
+{
+  "seed": 20261111,
+  "repetitions": 12,
+  "selected_threshold": 3,
+  "holdout_sha256": "d566792f586d0da03464c93b9e2b6340c73ae0f2a504edaeaa92c131bbfdf08b",
+  "calibration": {
+    "3": {
+      "tp": 36,
+      "fp": 22,
+      "fn": 0,
+      "tn": 14,
+      "precision": 0.6206896551724138,
+      "recall": 1.0,
+      "f1": 0.7659574468085106
+    },
+    "5": {
+      "tp": 18,
+      "fp": 19,
+      "fn": 18,
+      "tn": 17,
+      "precision": 0.4864864864864865,
+      "recall": 0.5,
+      "f1": 0.4931506849315068
+    },
+    "8": {
+      "tp": 12,
+      "fp": 7,
+      "fn": 24,
+      "tn": 29,
+      "precision": 0.631578947368421,
+      "recall": 0.3333333333333333,
+      "f1": 0.43636363636363634
+    }
+  },
+  "holdout": {
+    "any_failure": {
+      "tp": 36,
+      "fp": 30,
+      "fn": 0,
+      "tn": 6,
+      "precision": 0.5454545454545454,
+      "recall": 1.0,
+      "f1": 0.7058823529411765
+    },
+    "default_5": {
+      "tp": 18,
+      "fp": 12,
+      "fn": 18,
+      "tn": 24,
+      "precision": 0.6,
+      "recall": 0.5,
+      "f1": 0.5454545454545454
+    },
+    "selected": {
+      "tp": 36,
+      "fp": 20,
+      "fn": 0,
+      "tn": 16,
+      "precision": 0.6428571428571429,
+      "recall": 1.0,
+      "f1": 0.782608695652174
+    }
+  },
+  "restart_mismatches": 0,
+  "episodes": [
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [
+        0,
+        11
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [
+        0,
+        12
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [
+        0
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [
+        0
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [
+        0
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "quiet workstation",
+      "positive": false,
+      "seconds": [
+        0
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        5,
+        24,
+        34
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        20,
+        23,
+        29
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        16,
+        31
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        4
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        8,
+        24,
+        29
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        13
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        10,
+        22,
+        32
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        6
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        18,
+        35
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        16
+      ],
+      "direct_hits": [],
+      "restart_hits": []
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        6,
+        26,
+        31
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "mistyped password",
+      "positive": false,
+      "seconds": [
+        0,
+        18,
+        25
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        81,
+        123,
+        210,
+        248,
+        280,
+        309,
+        398,
+        436,
+        459,
+        510,
+        573
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        65,
+        103,
+        176,
+        200,
+        283,
+        331,
+        380,
+        467
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        30,
+        93,
+        166,
+        242,
+        301,
+        364
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        77,
+        103,
+        133,
+        214,
+        252,
+        274,
+        321,
+        374,
+        457,
+        513
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        64,
+        151,
+        212,
+        250,
+        275,
+        356,
+        415,
+        502,
+        542,
+        566
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        67,
+        112,
+        190,
+        270,
+        343,
+        417,
+        480,
+        542
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        67,
+        151,
+        206,
+        291,
+        351,
+        404,
+        445,
+        472,
+        535
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        89,
+        139,
+        172,
+        244,
+        325,
+        401,
+        434
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        49,
+        121,
+        199,
+        225,
+        307,
+        334,
+        372,
+        462,
+        498,
+        539,
+        619
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        63,
+        103,
+        184,
+        205,
+        226,
+        302,
+        332,
+        414
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        86,
+        174,
+        206,
+        283,
+        306,
+        343,
+        404,
+        471,
+        538,
+        622
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "stale service credential",
+      "positive": false,
+      "seconds": [
+        0,
+        42,
+        92,
+        127,
+        215,
+        254
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        10,
+        22,
+        36,
+        46
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        15,
+        23,
+        32,
+        50,
+        58
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        9,
+        27,
+        46
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        10,
+        25,
+        36,
+        40,
+        45
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        15,
+        26
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        11,
+        14,
+        21,
+        26
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        13,
+        16,
+        31,
+        40,
+        54,
+        69
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        7,
+        13,
+        17
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        9,
+        12,
+        19,
+        28
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        13,
+        30
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        11,
+        14,
+        24
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        3,
+        21,
+        38
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        4,
+        8,
+        16,
+        22,
+        30,
+        32,
+        35,
+        42,
+        49,
+        61
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        3,
+        13,
+        25,
+        32,
+        40,
+        45,
+        53,
+        60,
+        63
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        12,
+        21,
+        32,
+        34,
+        42,
+        44,
+        56,
+        61
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        7,
+        12,
+        24,
+        33,
+        36,
+        40,
+        48,
+        55,
+        57,
+        66,
+        75,
+        85,
+        88
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        12,
+        20,
+        32,
+        34,
+        39,
+        48,
+        55,
+        57,
+        66,
+        71,
+        73
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        2,
+        7,
+        9,
+        16,
+        23,
+        33,
+        39,
+        49,
+        51
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        4,
+        7,
+        17,
+        25,
+        33,
+        39,
+        48,
+        58,
+        68,
+        75
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        2,
+        4,
+        11,
+        21,
+        30,
+        39,
+        50,
+        61,
+        68,
+        72,
+        83,
+        90,
+        97
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        8,
+        19,
+        27,
+        36,
+        47,
+        50,
+        59,
+        67,
+        72
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        9,
+        14,
+        24,
+        34,
+        36,
+        42,
+        54,
+        66,
+        68,
+        74,
+        81
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        11,
+        22,
+        29,
+        31,
+        36,
+        46,
+        54,
+        64,
+        68,
+        79,
+        81,
+        84
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        11,
+        22,
+        27,
+        32,
+        39,
+        50,
+        53,
+        64,
+        76
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        227,
+        424,
+        627,
+        842
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        220,
+        386,
+        596,
+        761,
+        949
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        161,
+        338,
+        563
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        166,
+        329,
+        527,
+        753,
+        955
+      ],
+      "direct_hits": [
+        3,
+        6
+      ],
+      "restart_hits": [
+        3,
+        6
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        204,
+        421,
+        638
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        165,
+        344,
+        546,
+        767,
+        931,
+        1118,
+        1309
+      ],
+      "direct_hits": [
+        3,
+        7
+      ],
+      "restart_hits": [
+        3,
+        7
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        174,
+        365,
+        528
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        188,
+        372,
+        576,
+        747,
+        922,
+        1110,
+        1278,
+        1468
+      ],
+      "direct_hits": [
+        3,
+        7
+      ],
+      "restart_hits": [
+        3,
+        7
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        169,
+        346,
+        528,
+        754,
+        982,
+        1169,
+        1381,
+        1568
+      ],
+      "direct_hits": [
+        3,
+        6
+      ],
+      "restart_hits": [
+        3,
+        6
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        198,
+        369,
+        565,
+        781,
+        954,
+        1151,
+        1350,
+        1544
+      ],
+      "direct_hits": [
+        3,
+        7
+      ],
+      "restart_hits": [
+        3,
+        7
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        191,
+        402,
+        614,
+        775,
+        987
+      ],
+      "direct_hits": [
+        3
+      ],
+      "restart_hits": [
+        3
+      ]
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "positive": true,
+      "seconds": [
+        0,
+        169,
+        381,
+        551,
+        780,
+        952,
+        1147,
+        1366,
+        1577
+      ],
+      "direct_hits": [
+        3,
+        7
+      ],
+      "restart_hits": [
+        3,
+        7
+      ]
+    }
+  ]
+}
