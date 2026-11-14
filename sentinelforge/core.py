@@ -300,6 +300,8 @@ class Detector:
                     return []
                 self.source_last_burst[key] = now
                 evidence[0]['first_failure_at'] = q[0].isoformat()
+                evidence[0]['failure_count'] = len(q)
+                evidence[0]['window_minutes'] = int(self.window.total_seconds() / 60)
                 return [Alert('event-4625-source', 'high',
                     f'{len(q)} failed logons from {ip} in {int(self.window.total_seconds()/60)} minutes',
                     event.timestamp, evidence)]
