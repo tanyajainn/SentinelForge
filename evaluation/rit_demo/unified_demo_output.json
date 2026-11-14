@@ -1,0 +1,53 @@
+﻿{
+  "findings": [
+    {
+      "category": "authentication",
+      "severity": "high",
+      "score": 85,
+      "reasons": [
+        "20+ failed authentication attempts",
+        "Failures across multiple accounts",
+        "Remote interactive authentication"
+      ],
+      "recommended_action": "Verify the evidence and investigate the affected host. Do not automatically block, quarantine, or delete."
+    },
+    {
+      "category": "process",
+      "severity": "high",
+      "score": 95,
+      "reasons": [
+        "Office application launched a command shell",
+        "Encoded PowerShell command indicator"
+      ],
+      "recommended_action": "Verify the evidence and investigate the affected host. Do not automatically block, quarantine, or delete."
+    },
+    {
+      "category": "defender",
+      "severity": "high",
+      "score": 85,
+      "reasons": [
+        "Microsoft Defender malware detection"
+      ],
+      "recommended_action": "Verify the evidence and investigate the affected host. Do not automatically block, quarantine, or delete."
+    },
+    {
+      "category": "network",
+      "severity": "high",
+      "score": 85,
+      "reasons": [
+        "Outbound volume exceeds baseline by 10x",
+        "Previously unseen destination",
+        "Sensitive process associated with network activity"
+      ],
+      "recommended_action": "Verify the evidence and investigate the affected host. Do not automatically block, quarantine, or delete."
+    }
+  ],
+  "count": 4,
+  "categories": {
+    "authentication": 1,
+    "process": 1,
+    "defender": 1,
+    "network": 1
+  },
+  "mode": "offline_analysis_only"
+}

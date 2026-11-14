@@ -1,0 +1,535 @@
+{
+  "dataset": "evaluation\\results\\detection_accuracy.json",
+  "episodes": 72,
+  "limitations": [
+    "Synthetic authentication scenarios",
+    "No real account or source-IP attribution",
+    "No verified service-account metadata",
+    "V2 is an offline prototype, not the installed agent",
+    "Not independent real-world validation"
+  ],
+  "v1": {
+    "tp": 18,
+    "fp": 12,
+    "tn": 24,
+    "fn": 18,
+    "precision": 0.6,
+    "recall": 0.5,
+    "f1": 0.5454545454545454
+  },
+  "v2": {
+    "tp": 23,
+    "fp": 12,
+    "tn": 24,
+    "fn": 13,
+    "precision": 0.6571428571428571,
+    "recall": 0.6388888888888888,
+    "f1": 0.647887323943662
+  },
+  "details": [
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 0
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 2
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 2
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 0
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 0
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 1
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 0
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 1
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 0
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 0
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 1
+    },
+    {
+      "scenario": "quiet workstation",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 1
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 3
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 2
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 2
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 2
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 3
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 2
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "mistyped password",
+      "actual": false,
+      "v1": false,
+      "v2": false,
+      "failure_count": 3
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 12
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 9
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 7
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 11
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 11
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 9
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 10
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 8
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 12
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 9
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 11
+    },
+    {
+      "scenario": "stale service credential",
+      "actual": false,
+      "v1": true,
+      "v2": true,
+      "failure_count": 6
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 5
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 6
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 6
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 3
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 5
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 7
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 5
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 3
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "short suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 11
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 10
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 9
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 14
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 12
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 10
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 11
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 14
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 10
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 12
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 13
+    },
+    {
+      "scenario": "rapid suspicious sequence",
+      "actual": true,
+      "v1": true,
+      "v2": true,
+      "failure_count": 10
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 5
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 6
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 6
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": true,
+      "failure_count": 8
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 4
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": true,
+      "failure_count": 9
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": true,
+      "failure_count": 9
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": true,
+      "failure_count": 9
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": false,
+      "failure_count": 6
+    },
+    {
+      "scenario": "sparse suspicious sequence",
+      "actual": true,
+      "v1": false,
+      "v2": true,
+      "failure_count": 9
+    }
+  ]
+}
