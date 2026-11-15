@@ -86,3 +86,51 @@ The Security collector also monitors 4698, 4722, 4726 and 4740 when available.
 Alert emails identify the finding, first check, escalation condition and event
 reference. Use the [campus review workflow](docs/CAMPUS_REVIEW.md) to combine
 alias-labelled endpoint snapshots into a printable report without transferring raw logs.
+
+## Campus live view (pilot)
+
+IT provisions one private directory per device on an authenticated, encrypted SMB
+share. Give the assigned endpoint account modify access only to its directory
+and IT read access across the roster. Use separate accounts or machine identities
+for different endpoints. Do not reuse a directory after reinstalling an endpoint
+or replacing its database: provision a new alias for the new database.
+
+From this source checkout, start one collector per endpoint. Existing personal
+installations can run the publisher alongside their existing agent. On a new
+Windows campus installation use this collector to omit endpoint emails:
+
+    py -3 -m sentinelforge watch --local-only
+
+In another terminal run the publisher, using the actual assigned folder:
+
+    py -3 -m sentinelforge.campus publish "\\IT-SERVER\SentinelForge\LAB-01" --desktop
+
+For unattended use launch these commands at user sign-in with the checkout as
+the working directory. The desktop flag requests a local Windows message for new
+high/critical alerts even while offline. Initial history is excluded from desktop
+messages. Central sync includes stored alert IDs, times, rule names and severity.
+Historical batches are kept on the share. The local SQLite database supplies
+missed alerts after reconnection. Retain that database across outages.
+
+On the IT workstation, supply the complete roster, including missing machines:
+
+    py -3 -m sentinelforge.campus view "\\IT-SERVER\SentinelForge" LAB-01 LAB-02 --out campus-live.html
+
+Open campus-live.html locally. The page refreshes every 15 seconds, shows
+the latest 100 alerts and distinguishes missing, overdue and reporting devices.
+Publisher contact and collector health are separate columns. For a local pilot
+substitute an ordinary shared test folder. Device clocks should be synchronized.
+IT can print the dashboard to PDF or generate the existing date-range report
+offline. Automatic central email digests and remote configuration are future work.
+
+## macOS collector preview
+
+With Python 3.11+ and this checkout on a Mac, run
+`python3 -m sentinelforge.macos watch` in the foreground, or
+`python3 -m sentinelforge.macos install` from a logged-in GUI session for
+startup at login. The per-user launchd job points at the current checkout and
+interpreter; keep both there. It baselines readable user/system launch agent
+and system launch daemon plist files, then records additions, edits and removals
+in ~/SentinelForgeData/events.sqlite3. Legitimate software updates can trigger
+these findings. Use the same campus publisher with a mounted share. This preview
+covers launch configuration changes only. Native Mac installation awaits validation.
