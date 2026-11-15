@@ -239,6 +239,7 @@ def task_action(command):
 def deliver_channels(store, config, max_deliveries=25):
     """Deliver queued alerts with persistent SMTP retry protection."""
     import json
+    import math
     import os
     import time
     from pathlib import Path
@@ -259,8 +260,15 @@ def deliver_channels(store, config, max_deliveries=25):
     except (OSError, ValueError, TypeError):
         state = {}
 
-    now = time.time()
-    if now < float(state.get("next_attempt", 0)):
+    if not isinstance(state, dict):
+        state = {}
+    deadline = state.get("next_attempt", 0)
+    failures = state.get("failures", 0)
+    if type(deadline) not in (int, float) or not 0 <= deadline < math.inf:
+        deadline = 0
+    if type(failures) is not int or failures < 0:
+        failures = 0
+    if time.time() < deadline:
         return
 
     def save_state(data):
@@ -277,7 +285,7 @@ def deliver_channels(store, config, max_deliveries=25):
                 error = str(exc)[:400] or type(exc).__name__
                 store.channel_result(alert_id, channel, error)
 
-                failures = int(state.get("failures", 0)) + 1
+                failures += 1
                 delay = min(14400, 300 * (2 ** min(failures - 1, 5)))
 
                 # Gmail's temporary SMTP authentication lockout:
@@ -302,7 +310,7 @@ def deliver_channels(store, config, max_deliveries=25):
 
             store.channel_result(alert_id, channel)
             save_state({"failures": 0, "next_attempt": 0})
-            state = {"failures": 0, "next_attempt": 0}
+            failures = 0
             print(f"NOTIFIED {channel} alert #{alert_id}", flush=True)
 
 
