@@ -370,7 +370,10 @@ def main():
     from datetime import date
     parser.add_argument('--from-date', type=date.fromisoformat, help='first UTC alert date (YYYY-MM-DD)')
     parser.add_argument('--to-date', type=date.fromisoformat, help='last UTC alert date (YYYY-MM-DD)')
+    parser.add_argument('--local-only', action='store_true', help='collect without endpoint email in scan/watch mode')
     args = parser.parse_args()
+    if args.local_only and args.command not in ('scan','watch'):
+        parser.error('--local-only requires scan or watch')
     if args.command != 'pilot-report' and (args.from_date or args.to_date):
         parser.error('--from-date and --to-date require pilot-report')
     if args.command != 'export-csv' and (args.severity or args.email_status):
@@ -498,7 +501,8 @@ def main():
         while True:
             count, failed = scan(store, detector, args.max_events, args.quiet)
             # Existing pending alerts can be delivered even when a Windows log cannot be read.
-            deliver_configured_email(store)
+            if not args.local_only:
+                deliver_configured_email(store)
             print(f'Scan complete: {count} alerts, {len(failed)} failed channels', flush=True)
             if args.command == 'scan':
                 if failed:
