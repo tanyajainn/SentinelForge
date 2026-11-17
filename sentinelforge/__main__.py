@@ -40,6 +40,28 @@ def scan(store, detector, max_events, quiet=False):
         cursor = store.cursor(channel)
         try:
             events = fetch(channel, cursor, max_events=max_events)
+            oldest = getattr(events, 'oldest', None)
+            newest = getattr(events, 'newest', None)
+            if oldest is not None and newest is not None:
+                # Re-read from zero before resetting cursor: the initial query
+                # filtered out records smaller than the saved high-water mark.
+                if cursor > 0 and newest < cursor:
+                    recovery = fetch(channel, 0, max_events=max_events)
+                    # Fail closed if log changed again during our two queries.
+                    if getattr(recovery, 'newest', None) is None:
+                        raise RuntimeError('Log bounds unavailable during reset recovery')
+                    if recovery.newest < newest:
+                        raise RuntimeError('Log changed again during reset recovery')
+                    action = store.reconcile_log_bounds(
+                        channel, cursor, recovery.oldest, recovery.newest)
+                    if action == 'stale':
+                        raise RuntimeError('Cursor changed during reset recovery; retry scan')
+                    events = recovery
+                    # Detector will reload persisted history, which was reset.
+                else:
+                    action = store.reconcile_log_bounds(channel, cursor, oldest, newest)
+                    if action == 'stale':
+                        raise RuntimeError('Cursor changed during log-bound check; retry scan')
             alerts = store.ingest_batch(channel, events, detector)
         except Exception as exc:
             store.record_channel_check(channel, str(exc)[:400] or type(exc).__name__)

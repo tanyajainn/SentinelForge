@@ -59,6 +59,10 @@ class Store:
         self.db = sqlite3.connect(path)
         self.db.execute('CREATE TABLE IF NOT EXISTS defender_detections (detection_id TEXT PRIMARY KEY, record_id INTEGER NOT NULL, observed TEXT NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS cursor (channel TEXT PRIMARY KEY, record_id INTEGER NOT NULL)')
+        self.db.execute('CREATE TABLE IF NOT EXISTS log_discontinuities ('
+                        'channel TEXT NOT NULL, kind TEXT NOT NULL, old_cursor INTEGER NOT NULL, '
+                        'oldest INTEGER NOT NULL, newest INTEGER NOT NULL, observed TEXT NOT NULL, '
+                        'PRIMARY KEY(channel,kind,old_cursor,oldest,newest))')
         self.db.execute('CREATE TABLE IF NOT EXISTS alerts (id INTEGER PRIMARY KEY, timestamp TEXT, severity TEXT, rule TEXT, payload TEXT)')
         self.db.execute('CREATE TABLE IF NOT EXISTS delivery (alert_id INTEGER PRIMARY KEY, sent_at TEXT, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT, FOREIGN KEY(alert_id) REFERENCES alerts(id))')
         self.db.execute('CREATE TABLE IF NOT EXISTS notification_state (alert_id INTEGER NOT NULL, channel TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT, updated_at TEXT, PRIMARY KEY(alert_id, channel))')
@@ -206,6 +210,52 @@ class Store:
     def cursor(self, channel: str) -> int:
         row = self.db.execute('SELECT record_id FROM cursor WHERE channel=?', (channel,)).fetchone()
         return row[0] if row else 0
+
+    def reconcile_log_bounds(self, channel, expected_cursor, oldest, newest):
+        """Record a gap or reset the cursor atomically; never silently treat it healthy.
+
+        The bounds are unfiltered. A gap is possible evidence loss, not proof that
+        a matching security event was lost. Returns 'reset', 'gap', 'ok' or 'stale'.
+        """
+        if oldest is None or newest is None:
+            return 'ok'  # Empty log cannot establish its previous generation.
+        if not (0 <= oldest <= newest):
+            raise ValueError('Invalid event-log bounds')
+        self.db.execute('BEGIN IMMEDIATE')
+        try:
+            actual = self.cursor(channel)
+            if actual != expected_cursor:
+                self.db.commit()
+                return 'stale'
+            reset = actual > 0 and newest < actual
+            gap = actual > 0 and oldest > actual + 1
+            if not reset and not gap:
+                self.db.commit()
+                return 'ok'
+            kind = 'reset' if reset else 'retention-gap'
+            now = datetime.now(timezone.utc).isoformat()
+            inserted = self.db.execute(
+                'INSERT OR IGNORE INTO log_discontinuities VALUES (?,?,?,?,?,?)',
+                (channel, kind, actual, oldest, newest, now)
+            ).rowcount
+            if inserted:
+                self._insert_alert(Alert(
+                    'monitor-log-discontinuity', 'critical' if reset else 'high',
+                    f'Event log {kind} detected: {channel}', now,
+                    [{'channel': channel, 'kind': kind, 'previous_cursor': actual,
+                      'oldest_record': oldest, 'newest_record': newest,
+                      'note': 'Previously deleted or overwritten events cannot be recovered locally.'}]
+                ))
+            if reset:
+                # All cursor/history changes commit with the incident marker.
+                self.db.execute('UPDATE cursor SET record_id=0 WHERE channel=?', (channel,))
+                self.db.execute('DELETE FROM detector_state WHERE channel=?', (channel,))
+                self.db.execute('DELETE FROM source_failure_state WHERE channel=?', (channel,))
+            self.db.commit()
+            return kind if not reset else 'reset'
+        except BaseException:
+            self.db.rollback()
+            raise
 
     def advance(self, channel: str, record_id: int):
         self.db.execute('INSERT INTO cursor(channel,record_id) VALUES(?,?) ON CONFLICT(channel) DO UPDATE SET record_id=max(record_id,excluded.record_id)', (channel, record_id))
