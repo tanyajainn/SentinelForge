@@ -25,7 +25,9 @@ class CredentialIsolationTests(unittest.TestCase):
 
     def test_smtp_uses_explicit_credentials(self):
         alert = Alert('test', 'info', 'Test', '2026-11-17T00:00:00Z', [])
-        with patch.dict(os.environ, {}, clear=True), patch('smtplib.SMTP_SSL') as smtp:
+        with patch.dict(os.environ, {}, clear=True), \
+             patch('smtplib.SMTP_SSL') as smtp, \
+             patch('sentinelforge.channels.ssl.create_default_context') as tls_context:
             send_email(alert, {'mode': 'email', 'email_to': 'recipient@example.invalid'},
                        credentials=('sender@gmail.com', 'fixture-secret'))
             server = smtp.return_value.__enter__.return_value
