@@ -96,8 +96,10 @@ SERVICE = 'SentinelForge-Gmail'
 
 
 def _powershell(script):
+    child_env = {key: value for key, value in os.environ.items()
+                 if key.upper() not in ('SENTINELFORGE_GMAIL_APP_PASSWORD', 'SENTINELFORGE_GMAIL_FROM')}
     result = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', script],
-                            capture_output=True, text=True, timeout=45,
+                            env=child_env, capture_output=True, text=True, timeout=45,
                             creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
     if result.returncode:
         raise RuntimeError((result.stderr or result.stdout).strip() or 'Windows Task Scheduler failed')
@@ -110,25 +112,22 @@ def _task_command(command):
 
 
 def load_gmail_credentials(config):
-    """Populate sender credentials for both the interactive CLI and background agent."""
+    """Return (sender, secret) from the OS keyring without exporting it.
+
+    The calling code must pass the tuple directly to SMTP and never log it.
+    """
     if not config or config.get('mode') != 'email':
-        return False
-    sender = config.get('gmail_from', '').strip()
+        return None
+    sender = str(config.get('gmail_from') or '').strip()
     if not sender:
-        return False
+        return None
     try:
         import keyring
         password = keyring.get_password(SERVICE, sender)
     except Exception as exc:
         print(f'Gmail credential lookup failed: {type(exc).__name__}', file=sys.stderr, flush=True)
-        return False
-    if not password:
-        os.environ.pop('SENTINELFORGE_GMAIL_FROM', None)
-        os.environ.pop('SENTINELFORGE_GMAIL_APP_PASSWORD', None)
-        return False
-    os.environ['SENTINELFORGE_GMAIL_FROM'] = sender
-    os.environ['SENTINELFORGE_GMAIL_APP_PASSWORD'] = password
-    return True
+        return None
+    return (sender, password) if password else None
 
 
 def setup():
@@ -231,10 +230,11 @@ def deliver_configured_email(store):
             config = load_config()
         if not config:
             return
-        if not load_gmail_credentials(config):
+        credentials = load_gmail_credentials(config)
+        if not credentials:
             print('Email paused: Gmail credentials unavailable.', file=sys.stderr, flush=True)
             return
-        deliver_channels(store, config)
+        deliver_channels(store, config, credentials=credentials)
     except Exception as exc:
         print(f'Email paused: {type(exc).__name__}: {exc}', file=sys.stderr, flush=True)
 
@@ -258,7 +258,7 @@ def task_action(command):
 
 
 # SENTINELFORGE_SMTP_BACKOFF_V1
-def deliver_channels(store, config, max_deliveries=25):
+def deliver_channels(store, config, max_deliveries=25, credentials=None):
     """Deliver queued alerts with persistent SMTP retry protection."""
     import json
     import math
@@ -270,7 +270,7 @@ def deliver_channels(store, config, max_deliveries=25):
         return
 
     try:
-        check_config(config)
+        check_config(config, credentials=credentials)
     except ValueError as exc:
         print("NOTIFICATIONS PAUSED:", exc, flush=True)
         return
@@ -305,7 +305,10 @@ def deliver_channels(store, config, max_deliveries=25):
                 break
             alert_id, alert, claim_token = claim
             try:
-                send(channel, alert, config)
+                if credentials is None:
+                    send(channel, alert, config)  # legacy caller compatibility
+                else:
+                    send(channel, alert, config, credentials=credentials)
 
             except Exception as exc:
                 error = str(exc)[:400] or type(exc).__name__
@@ -516,8 +519,12 @@ def main():
         return
     if args.command == 'notify-pending':
         config = load_config()
-        load_gmail_credentials(config)
-        deliver_channels(store, config)
+        credentials = load_gmail_credentials(config)
+        if not credentials:
+            print('NOTIFICATIONS PAUSED: Gmail credentials unavailable.', file=sys.stderr)
+            store.db.close()
+            sys.exit(2)
+        deliver_channels(store, config, credentials=credentials)
         store.db.close()
         return
     if os.name != 'nt':

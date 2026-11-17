@@ -12,7 +12,7 @@ def enabled_channels(config):
     return ["email"]
 
 
-def check_config(config):
+def check_config(config, credentials=None):
     if config.get("mode") != "email":
         raise ValueError(
             "Only email notifications are supported. Run setup."
@@ -21,10 +21,15 @@ def check_config(config):
     if not config.get("email_to"):
         raise ValueError("Email recipient is missing.")
 
-    if not os.getenv("SENTINELFORGE_GMAIL_FROM"):
+    # Explicit credentials are used by the agent. Environment credentials are
+    # accepted for backwards-compatible callers, but are never set by the agent.
+    sender, password = credentials if credentials is not None else (
+        os.getenv('SENTINELFORGE_GMAIL_FROM'),
+        os.getenv('SENTINELFORGE_GMAIL_APP_PASSWORD'),
+    )
+    if not sender:
         raise ValueError("Gmail sender is not configured.")
-
-    if not os.getenv("SENTINELFORGE_GMAIL_APP_PASSWORD"):
+    if not password:
         raise ValueError("Gmail App Password is not configured.")
 
 
@@ -248,11 +253,15 @@ def format_alert(alert):
     return subject, '\n'.join(lines)
 
 
-def send_email(alert, config):
-    check_config(config)
+def send_email(alert, config, credentials=None):
+    check_config(config, credentials=credentials)
+    sender, password = credentials if credentials is not None else (
+        os.environ["SENTINELFORGE_GMAIL_FROM"],
+        os.environ["SENTINELFORGE_GMAIL_APP_PASSWORD"],
+    )
 
     msg = EmailMessage()
-    msg["From"] = os.environ["SENTINELFORGE_GMAIL_FROM"]
+    msg["From"] = sender
     import sys
     from importlib.util import find_spec
     if getattr(sys, "frozen", False) and find_spec("sentinelforge._local_mail_policy") is not None:
@@ -282,10 +291,7 @@ def send_email(alert, config):
                     server.ehlo()
                     server.starttls(context=ctx)
                     server.ehlo()
-                server.login(
-                    os.environ["SENTINELFORGE_GMAIL_FROM"],
-                    os.environ["SENTINELFORGE_GMAIL_APP_PASSWORD"],
-                )
+                server.login(sender, password)
                 submission_started = True
                 server.send_message(msg)
                 accepted = True
@@ -304,7 +310,7 @@ def send_email(alert, config):
     raise RuntimeError("SMTP delivery failed: " + "; ".join(errors))
 
 
-def send(channel, alert, config):
+def send(channel, alert, config, credentials=None):
     if channel != "email":
         raise ValueError("Unsupported notification channel.")
-    return send_email(alert, config)
+    return send_email(alert, config, credentials=credentials)

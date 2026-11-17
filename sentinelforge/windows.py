@@ -1,6 +1,7 @@
 """Read Windows Event Log via built-in PowerShell (no third-party dependencies)."""
 from __future__ import annotations
 import json
+import os
 import subprocess
 from .core import Event
 
@@ -57,8 +58,10 @@ if ($_.Id -in 4625,1116,1117,1118) {{
 [pscustomobject]@{{source_ip=$fields['IpAddress'];target_username=$fields['TargetUserName'];logon_type=$fields['LogonType'];detection_id=$fields['Detection ID'];action_name=$fields['Action Name'];channel=$_.LogName;record_id=[long]$_.RecordId;event_id=[int]$_.Id;timestamp=$_.TimeCreated.ToUniversalTime().ToString('o');provider=$_.ProviderName;message=($_.Message | Out-String).Trim()}} }})
 [pscustomobject]@{{oldest=$oldestId;newest=$newestId;events=$records}} | ConvertTo-Json -Depth 5 -Compress
 '''
+    child_env = {key: value for key, value in os.environ.items()
+                 if key.upper() not in ('SENTINELFORGE_GMAIL_APP_PASSWORD', 'SENTINELFORGE_GMAIL_FROM')}
     p = subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',ps],
-                       capture_output=True, text=True, timeout=90,
+                       env=child_env, capture_output=True, text=True, timeout=90,
                        creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
     if p.returncode != 0:
         raise RuntimeError(f'Unable to read {channel}: {p.stderr.strip()[:400]}')
