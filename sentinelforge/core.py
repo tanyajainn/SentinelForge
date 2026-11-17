@@ -63,6 +63,13 @@ class Store:
         self.db.execute('CREATE TABLE IF NOT EXISTS delivery (alert_id INTEGER PRIMARY KEY, sent_at TEXT, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT, FOREIGN KEY(alert_id) REFERENCES alerts(id))')
         self.db.execute('CREATE TABLE IF NOT EXISTS notification_state (alert_id INTEGER NOT NULL, channel TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, last_error TEXT, updated_at TEXT, PRIMARY KEY(alert_id, channel))')
         self.db.execute('CREATE TABLE IF NOT EXISTS notification_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
+        # Upgrade old databases in place; leases live alongside notification status.
+        # SQLite transactions serialize competing claims across processes.
+        columns = {row[1] for row in self.db.execute('PRAGMA table_info(notification_state)')}
+        if 'lease_owner' not in columns:
+            self.db.execute('ALTER TABLE notification_state ADD COLUMN lease_owner TEXT')
+        if 'lease_until' not in columns:
+            self.db.execute('ALTER TABLE notification_state ADD COLUMN lease_until REAL')
         self.db.execute('CREATE TABLE IF NOT EXISTS channel_health (channel TEXT PRIMARY KEY, checked_at TEXT NOT NULL, last_success TEXT, error TEXT)')
         self.db.execute('CREATE TABLE IF NOT EXISTS emailed_config_changes (fingerprint TEXT PRIMARY KEY, queued_at REAL NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS detector_state (channel TEXT PRIMARY KEY, failures TEXT NOT NULL, last_burst TEXT)')
@@ -86,6 +93,67 @@ class Store:
             raise RuntimeError('Run baseline-notifications before sending alerts')
         baseline_id = int(row[0])
         return [(i, Alert(**json.loads(payload))) for i,payload in self.db.execute("SELECT a.id,a.payload FROM alerts a LEFT JOIN notification_state n ON n.alert_id=a.id AND n.channel=? WHERE a.id>? AND (n.status IS NULL OR n.status='failed') ORDER BY a.id LIMIT ?",(channel,baseline_id,limit))]
+
+    def claim_notification(self, channel, lease_seconds=120, now=None):
+        """Claim one eligible alert atomically; return (id, Alert, token) or None.
+
+        Unacknowledged leases may be reclaimed after expiry. This is at-least-once
+        delivery; SMTP acceptance immediately before a crash can still duplicate.
+        """
+        import uuid
+        if lease_seconds <= 0:
+            raise ValueError('lease_seconds must be positive')
+        moment = time.time() if now is None else float(now)
+        token = uuid.uuid4().hex
+        # BEGIN IMMEDIATE serializes competing writers even in rollback mode.
+        self.db.execute('BEGIN IMMEDIATE')
+        try:
+            row = self.db.execute(
+                "SELECT value FROM notification_meta WHERE key='baseline'"
+            ).fetchone()
+            if row is None:
+                raise RuntimeError('Run baseline-notifications before sending alerts')
+            candidate = self.db.execute(
+                "SELECT a.id,a.payload FROM alerts a "
+                "LEFT JOIN notification_state n "
+                "ON n.alert_id=a.id AND n.channel=? "
+                "WHERE a.id>? AND (n.status IS NULL OR n.status='failed' "
+                "OR (n.status='leased' AND n.lease_until <= ?)) "
+                "ORDER BY a.id LIMIT 1",
+                (channel, int(row[0]), moment),
+            ).fetchone()
+            if candidate is None:
+                self.db.commit()
+                return None
+            alert_id, payload = candidate
+            self.db.execute(
+                "INSERT INTO notification_state "
+                "(alert_id,channel,status,attempts,updated_at,lease_owner,lease_until) "
+                "VALUES (?,?,'leased',0,?,?,?) "
+                "ON CONFLICT(alert_id,channel) DO UPDATE SET "
+                "status='leased', updated_at=excluded.updated_at, "
+                "lease_owner=excluded.lease_owner, lease_until=excluded.lease_until",
+                (alert_id, channel, datetime.now(timezone.utc).isoformat(),
+                 token, moment + lease_seconds),
+            )
+            self.db.commit()
+            return alert_id, Alert(**json.loads(payload)), token
+        except BaseException:
+            self.db.rollback()
+            raise
+
+    def finish_notification(self, alert_id, channel, token, error=None):
+        """Acknowledge only the claim holder. Returns False for stale owners."""
+        with self.db:
+            updated = self.db.execute(
+                "UPDATE notification_state SET status=?, attempts=attempts+1, "
+                "last_error=?, updated_at=?, lease_owner=NULL, lease_until=NULL "
+                "WHERE alert_id=? AND channel=? AND status='leased' "
+                "AND lease_owner=?",
+                ('failed' if error is not None else 'sent', error,
+                 datetime.now(timezone.utc).isoformat(), alert_id, channel, token),
+            )
+            return updated.rowcount == 1
 
     def channel_result(self, alert_id, channel, error=None):
         with self.db:

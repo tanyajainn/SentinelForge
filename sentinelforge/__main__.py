@@ -277,13 +277,18 @@ def deliver_channels(store, config, max_deliveries=25):
         os.replace(tmp, state_path)
 
     for channel in enabled_channels(config):
-        for alert_id, alert in store.channel_pending(channel, max_deliveries):
+        for _ in range(max_deliveries):
+            claim = store.claim_notification(channel)
+            if claim is None:
+                break
+            alert_id, alert, claim_token = claim
             try:
                 send(channel, alert, config)
 
             except Exception as exc:
                 error = str(exc)[:400] or type(exc).__name__
-                store.channel_result(alert_id, channel, error)
+                if not store.finish_notification(alert_id, channel, claim_token, error):
+                    raise RuntimeError('Email lease ownership lost during failure acknowledgement')
 
                 failures += 1
                 delay = min(14400, 300 * (2 ** min(failures - 1, 5)))
@@ -308,7 +313,8 @@ def deliver_channels(store, config, max_deliveries=25):
                 )
                 return
 
-            store.channel_result(alert_id, channel)
+            if not store.finish_notification(alert_id, channel, claim_token):
+                raise RuntimeError('Email lease ownership lost after SMTP submission')
             save_state({"failures": 0, "next_attempt": 0})
             failures = 0
             print(f"NOTIFIED {channel} alert #{alert_id}", flush=True)
