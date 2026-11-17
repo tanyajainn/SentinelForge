@@ -322,10 +322,10 @@ def deliver_channels(store, config, max_deliveries=25, credentials=None):
                     permanent = True
                 # Do not persist raw SMTP error bodies, which may contain PII.
                 error = type(exc).__name__ if permanent else (str(exc)[:400] or type(exc).__name__)
-                if not store.finish_notification(
-                        alert_id, channel, claim_token, error, permanent=permanent):
-                    raise RuntimeError('Email lease ownership lost during failure acknowledgement')
                 if permanent:
+                    if not store.finish_notification(
+                            alert_id, channel, claim_token, error, permanent=True):
+                        raise RuntimeError('Email lease ownership lost during failure acknowledgement')
                     print(f'EMAIL PERMANENT FAILURE alert #{alert_id}: {error}; continuing queue',
                           flush=True)
                     continue
@@ -340,9 +340,14 @@ def deliver_channels(store, config, max_deliveries=25, credentials=None):
                     "authentication" in error.lower()):
                     delay = max(delay, 3600)
 
+                deadline = time.time() + delay
+                if not store.finish_notification(
+                        alert_id, channel, claim_token, error,
+                        retry_after=deadline, max_attempts=8):
+                    raise RuntimeError('Email lease ownership lost during failure acknowledgement')
                 save_state({
                     "failures": failures,
-                    "next_attempt": time.time() + delay
+                    "next_attempt": deadline
                 })
 
                 print(

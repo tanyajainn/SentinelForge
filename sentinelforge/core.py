@@ -74,6 +74,8 @@ class Store:
             self.db.execute('ALTER TABLE notification_state ADD COLUMN lease_owner TEXT')
         if 'lease_until' not in columns:
             self.db.execute('ALTER TABLE notification_state ADD COLUMN lease_until REAL')
+        if 'next_attempt' not in columns:
+            self.db.execute('ALTER TABLE notification_state ADD COLUMN next_attempt REAL')
         self.db.execute('CREATE TABLE IF NOT EXISTS channel_health (channel TEXT PRIMARY KEY, checked_at TEXT NOT NULL, last_success TEXT, error TEXT)')
         self.db.execute('CREATE TABLE IF NOT EXISTS emailed_config_changes (fingerprint TEXT PRIMARY KEY, queued_at REAL NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS detector_state (channel TEXT PRIMARY KEY, failures TEXT NOT NULL, last_burst TEXT)')
@@ -121,10 +123,11 @@ class Store:
                 "SELECT a.id,a.payload FROM alerts a "
                 "LEFT JOIN notification_state n "
                 "ON n.alert_id=a.id AND n.channel=? "
-                "WHERE a.id>? AND (n.status IS NULL OR n.status='failed' "
+                "WHERE a.id>? AND (n.status IS NULL "
+                "OR (n.status='failed' AND (n.next_attempt IS NULL OR n.next_attempt <= ?)) "
                 "OR (n.status='leased' AND n.lease_until <= ?)) "
                 "ORDER BY a.id LIMIT 1",
-                (channel, int(row[0]), moment),
+                (channel, int(row[0]), moment, moment),
             ).fetchone()
             if candidate is None:
                 self.db.commit()
@@ -146,18 +149,44 @@ class Store:
             self.db.rollback()
             raise
 
-    def finish_notification(self, alert_id, channel, token, error=None, permanent=False):
-        """Acknowledge only the claim holder; permanent failures leave the queue."""
+    def finish_notification(self, alert_id, channel, token, error=None, permanent=False,
+                            retry_after=None, max_attempts=8):
+        """Complete only a claim owned by token, with durable retry scheduling.
+
+        Defaults retain the legacy immediate-retry API for existing callers.
+        The SMTP worker supplies retry_after after a transient failure.
+        Exceeded retries become 'exhausted' (not silently discarded).
+        """
         if permanent and error is None:
             raise ValueError('Permanent failure requires an error')
-        status = 'permanent_failed' if permanent else ('failed' if error is not None else 'sent')
+        if type(max_attempts) is not int or max_attempts < 1:
+            raise ValueError('max_attempts must be a positive integer')
+        if retry_after is not None:
+            import math
+            if (type(retry_after) not in (int, float)
+                    or not math.isfinite(retry_after) or retry_after < 0):
+                raise ValueError('retry_after must be a nonnegative finite timestamp')
+            if error is None or permanent:
+                raise ValueError('retry_after requires a transient error')
         with self.db:
+            row = self.db.execute(
+                "SELECT attempts FROM notification_state WHERE alert_id=? AND channel=? "
+                "AND status='leased' AND lease_owner=?",
+                (alert_id, channel, token),
+            ).fetchone()
+            if row is None:
+                return False
+            attempts = row[0] + 1
+            status = ('permanent_failed' if permanent else
+                      'sent' if error is None else
+                      'exhausted' if attempts >= max_attempts else 'failed')
+            next_attempt = retry_after if status == 'failed' else None
             updated = self.db.execute(
                 "UPDATE notification_state SET status=?, attempts=attempts+1, "
-                "last_error=?, updated_at=?, lease_owner=NULL, lease_until=NULL "
-                "WHERE alert_id=? AND channel=? AND status='leased' "
+                "last_error=?, updated_at=?, lease_owner=NULL, lease_until=NULL, "
+                "next_attempt=? WHERE alert_id=? AND channel=? AND status='leased' "
                 "AND lease_owner=?",
-                (status, error, datetime.now(timezone.utc).isoformat(),
+                (status, error, datetime.now(timezone.utc).isoformat(), next_attempt,
                  alert_id, channel, token),
             )
             return updated.rowcount == 1
