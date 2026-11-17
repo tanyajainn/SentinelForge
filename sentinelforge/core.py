@@ -146,16 +146,19 @@ class Store:
             self.db.rollback()
             raise
 
-    def finish_notification(self, alert_id, channel, token, error=None):
-        """Acknowledge only the claim holder. Returns False for stale owners."""
+    def finish_notification(self, alert_id, channel, token, error=None, permanent=False):
+        """Acknowledge only the claim holder; permanent failures leave the queue."""
+        if permanent and error is None:
+            raise ValueError('Permanent failure requires an error')
+        status = 'permanent_failed' if permanent else ('failed' if error is not None else 'sent')
         with self.db:
             updated = self.db.execute(
                 "UPDATE notification_state SET status=?, attempts=attempts+1, "
                 "last_error=?, updated_at=?, lease_owner=NULL, lease_until=NULL "
                 "WHERE alert_id=? AND channel=? AND status='leased' "
                 "AND lease_owner=?",
-                ('failed' if error is not None else 'sent', error,
-                 datetime.now(timezone.utc).isoformat(), alert_id, channel, token),
+                (status, error, datetime.now(timezone.utc).isoformat(),
+                 alert_id, channel, token),
             )
             return updated.rowcount == 1
 

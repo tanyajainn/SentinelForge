@@ -311,9 +311,24 @@ def deliver_channels(store, config, max_deliveries=25, credentials=None):
                     send(channel, alert, config, credentials=credentials)
 
             except Exception as exc:
-                error = str(exc)[:400] or type(exc).__name__
-                if not store.finish_notification(alert_id, channel, claim_token, error):
+                import smtplib
+                # Authentication and transport failures affect the whole service.
+                # An invalid destination or permanent message rejection affects
+                # only this alert; do not starve unrelated critical alerts.
+                permanent = isinstance(exc, (ValueError, smtplib.SMTPRecipientsRefused))
+                if (isinstance(exc, smtplib.SMTPResponseException)
+                        and not isinstance(exc, smtplib.SMTPAuthenticationError)
+                        and 500 <= exc.smtp_code < 600):
+                    permanent = True
+                # Do not persist raw SMTP error bodies, which may contain PII.
+                error = type(exc).__name__ if permanent else (str(exc)[:400] or type(exc).__name__)
+                if not store.finish_notification(
+                        alert_id, channel, claim_token, error, permanent=permanent):
                     raise RuntimeError('Email lease ownership lost during failure acknowledgement')
+                if permanent:
+                    print(f'EMAIL PERMANENT FAILURE alert #{alert_id}: {error}; continuing queue',
+                          flush=True)
+                    continue
 
                 failures += 1
                 delay = min(14400, 300 * (2 ** min(failures - 1, 5)))
