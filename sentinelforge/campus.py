@@ -14,6 +14,54 @@ from .core import RULES
 from .fleet import LABEL
 from .pilot import _table
 
+MAX_BATCH_BYTES = 256 * 1024
+MAX_BATCH_FILES = 50
+MAX_ROWS_PER_BATCH = 250
+
+
+def safe_endpoint(root, alias):
+    """Validate aliases and reject endpoint links escaping the configured share.
+
+    Assumes the trusted SMB administrator controls the root directory. An
+    untrusted share administrator can still race path checks; see threat model.
+    """
+    if not isinstance(alias, str) or not LABEL.fullmatch(alias):
+        raise ValueError("Invalid endpoint alias")
+    if alias.upper().split(".")[0] in {"CON", "PRN", "AUX", "NUL", *
+                                 (f"COM{i}" for i in range(1, 10)), *
+                                 (f"LPT{i}" for i in range(1, 10))}:
+        raise ValueError("Reserved endpoint alias")
+    root = Path(root)
+    folder = root / alias
+    if root.is_symlink() or folder.is_symlink():
+        raise ValueError("Linked directories are not trusted")
+    if not folder.resolve().is_relative_to(root.resolve()):
+        raise ValueError("Endpoint escapes share")
+    return folder
+
+
+def read_bounded_json(path):
+    """Read a limited-size JSON file; reject linked and oversized files."""
+    if path.is_symlink():
+        raise ValueError("Linked input file")
+    with path.open("rb") as stream:
+        raw = stream.read(MAX_BATCH_BYTES + 1)
+    if len(raw) > MAX_BATCH_BYTES:
+        raise ValueError("Campus input exceeds size limit")
+    return json.loads(raw.decode("utf-8"))
+
+
+def event_sort_key(row):
+    """Normalize untrusted timestamps to UTC; reject non-string dates."""
+    stamp = row[0]
+    if not isinstance(stamp, str):
+        raise ValueError("Invalid alert timestamp")
+    parsed = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError("Timestamp must include timezone")
+    return parsed.astimezone(timezone.utc)
+
+
 DATA = Path.home() / "SentinelForgeData"
 DB = DATA / "events.sqlite3"
 
@@ -71,42 +119,79 @@ def desktop(db, cursor):
 
 
 def render(root, devices):
+    """Render safely even if an individual endpoint submits malformed data."""
     inventory, alerts = [], []
     for device in devices:
-        folder = root / device
         try:
-            beat = json.loads((folder / "heartbeat.json").read_text(encoding="utf-8"))
-            age = time.time() - beat["time"]
+            folder = safe_endpoint(root, device)
+            beat = read_bounded_json(folder / "heartbeat.json")
+            if not isinstance(beat, dict):
+                raise ValueError("Invalid heartbeat object")
+            seen_at = beat["time"]
+            if type(seen_at) not in (int, float):
+                raise ValueError("Invalid heartbeat time")
+            age = time.time() - seen_at
             state = "Reporting" if -30 <= age <= 90 else "Check-in overdue"
-            seen = datetime.fromtimestamp(beat["time"], timezone.utc).strftime("%H:%M:%S UTC %Y-%m-%d")
-            issues = [channel for channel, stamp, ok in beat["channels"]
-                      if not ok or time.time()-datetime.fromisoformat(stamp).timestamp()>180]
-            health = ", ".join(issues) or ("Recent checks OK" if beat["channels"] else "No channel checks")
+            seen = datetime.fromtimestamp(seen_at, timezone.utc).strftime("%H:%M:%S UTC %Y-%m-%d")
+            channels = beat["channels"]
+            if not isinstance(channels, list) or len(channels) > 20:
+                raise ValueError("Invalid channels")
+            issues = []
+            for entry in channels:
+                if not isinstance(entry, list) or len(entry) != 3:
+                    raise ValueError("Invalid channel record")
+                channel, stamp, ok = entry
+                if not isinstance(channel, str) or len(channel) > 128 or type(ok) is not bool:
+                    raise ValueError("Invalid channel fields")
+                checked = event_sort_key((stamp,))
+                if not ok or not -30 <= time.time() - checked.timestamp() <= 180:
+                    issues.append(channel)
+            health = ", ".join(issues) or ("Recent checks OK" if channels else "No channel checks")
         except FileNotFoundError:
             state, seen, health = "No check-in", "-", "Unknown"
         except (OSError, ValueError, TypeError, KeyError, OverflowError):
             state, seen, health = "Unreadable check-in", "-", "Unknown"
         inventory.append((device, state, seen, health))
         try:
-            files = sorted(folder.glob("batch-*.json"), reverse=True)
+            folder = safe_endpoint(root, device)
+            files = sorted(folder.glob("batch-*.json"), reverse=True)[:MAX_BATCH_FILES]
             recent = []
             for file in files:
-                rows = json.loads(file.read_text(encoding="utf-8"))
-                for event_id, stamp, severity, rule in reversed(rows):
+                if not file.name.startswith("batch-") or not file.stem[6:].isdigit():
+                    continue
+                rows = read_bounded_json(file)
+                if not isinstance(rows, list) or len(rows) > MAX_ROWS_PER_BATCH:
+                    raise ValueError("Invalid alert batch")
+                for row in reversed(rows):
+                    if not isinstance(row, list) or len(row) != 4:
+                        raise ValueError("Invalid alert row")
+                    event_id, stamp, severity, rule = row
+                    if (type(event_id) is not int or event_id < 0 or
+                        not isinstance(severity, str) or len(severity) > 32 or
+                        not isinstance(rule, str) or len(rule) > 128):
+                        raise ValueError("Invalid alert fields")
+                    event_sort_key((stamp,))
                     label = RULES.get(int(rule[6:]), ("", rule))[1] if rule.startswith("event-") and rule[6:].isdigit() else rule
                     recent.append((stamp, device, severity, label, event_id))
                 if len(recent) >= 100:
                     break
             alerts.extend(recent[:100])
-        except (OSError, TypeError, ValueError, AttributeError):
+        except (OSError, TypeError, ValueError, AttributeError, KeyError, OverflowError):
             inventory[-1] = (device, state, seen, "Alert history unreadable")
-    return ('<!doctype html><meta charset=utf-8><meta http-equiv=refresh content=15>'
+            alerts = [row for row in alerts if row[1] != device]
+    try:
+        ordered = sorted(alerts, key=event_sort_key, reverse=True)[:100]
+    except (ValueError, TypeError, OverflowError):
+        ordered = []  # Never let malformed timestamps crash the full dashboard.
+    return ('<!doctype html><html lang="en"><meta charset=utf-8>'
+            '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; base-uri \'none\'; form-action \'none\'">'
+            '<meta http-equiv=refresh content=15>'
             '<title>SentinelForge campus</title><style>body{font:16px system-ui;margin:3%}table{border-collapse:collapse}'
             'td,th{padding:7px;text-align:left;border-bottom:1px solid #ccc}</style><h1>Campus monitoring</h1>'
             + '<p>Generated '+datetime.now(timezone.utc).isoformat(timespec="seconds")+'</p>'
             + _table(["Device","Publisher","Last check-in","Collection health"], inventory)
-            + '<h2>Latest 100 alerts</h2>' + _table(["Event time","Device","Severity","Finding","Local ID"],
-                                                   sorted(alerts,reverse=True)[:100]))
+            + '<h2>Latest 100 alerts</h2>' + _table(["Event time","Device","Severity","Finding","Local ID"], ordered)
+            + '</html>')
 
 
 def main():
