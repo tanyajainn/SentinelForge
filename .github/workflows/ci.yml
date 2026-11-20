@@ -1,11 +1,24 @@
-name: Python tests
-on: [push, pull_request]
+name: Python regression tests (Linux and Windows)
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  tests:
+    name: Python 3.12 on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m unittest discover -s tests -v
+      - name: Run regression suite
+        run: python -m unittest discover -s tests -v

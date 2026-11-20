@@ -1,0 +1,32 @@
+name: Windows release build and archive validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build Windows release (includes regression suite and smoke checks)
+        shell: pwsh
+        run: .\build-windows.ps1
+      - name: Independently inspect ZIP and execute binaries
+        shell: pwsh
+        run: .\scripts\verify-capstone-build.ps1 -ZipPath .\dist\SentinelForge-Windows.zip -OutputFile .\evidence\windows-build-evidence.json
+      - name: Upload unsigned candidate and build evidence (not a public release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: SentinelForge-Windows-Candidate-${{ github.sha }}
+          path: |
+            dist/SentinelForge-Windows.zip
+            evidence/windows-build-evidence.json
+          if-no-files-found: error
+          retention-days: 14
