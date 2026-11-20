@@ -4,6 +4,7 @@ import json
 import sqlite3
 import tempfile
 import unittest
+from contextlib import closing
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -35,7 +36,7 @@ class LiveEvidenceAuditTests(unittest.TestCase):
     def test_read_only_filters_synthetic_and_duplicates(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "test.sqlite3"
-            with sqlite3.connect(path) as db:
+            with closing(sqlite3.connect(path)) as db, db:
                 db.execute("CREATE TABLE alerts (id INTEGER PRIMARY KEY, payload TEXT)")
                 db.executemany("INSERT INTO alerts (id,payload) VALUES (?,?)", [
                     (1, json.dumps({"evidence": [{"channel":"Security", "record_id":99, "event_id":4625}]})),

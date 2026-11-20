@@ -10,6 +10,7 @@ usernames, emails, or source IPs are exported.
 from __future__ import annotations
 
 import argparse
+from contextlib import closing
 import json
 import os
 import sqlite3
@@ -32,7 +33,7 @@ def candidates(db_path: Path, sample_size: int, lookback: int = 2000) -> list[di
     uri = db_path.resolve().as_uri() + "?mode=ro"
     result = []
     seen = set()
-    with sqlite3.connect(uri, uri=True, timeout=10) as db:
+    with closing(sqlite3.connect(uri, uri=True, timeout=10)) as db:
         db.execute("PRAGMA query_only=ON")
         rows = db.execute("SELECT id,payload FROM alerts ORDER BY id DESC LIMIT ?", (lookback,))
         for alert_id, payload in rows:
