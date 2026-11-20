@@ -51,14 +51,33 @@ A fully automatic one-word system-wide command on a **fresh computer** is a sepa
 For an existing installation, follow [the build, migration and verification steps](HARDENING.md).
 After migration, use the protected CLI beside the scheduled agent for status and self-test.
 
+<!-- SENTINELFORGE_EVAL_START -->
+## Reproducible detection evaluation
+
+**Synthetic failed-logon benchmark:** 576 episodes across
+8 independently seeded runs.
+
+| TP | FP | FN | TN | Precision | Recall | F1 |
+|---:|---:|---:|---:|---:|---:|---:|
+| 288 | 171 | 0 | 117 | 62.7% | 100.0% | 0.771 |
+
+Reproduce using:
+`python -m evaluation.release_audit --runs 8 --repetitions 12 --out evaluation/results/logon_synthetic`
+
+These are synthetic failed-logon scenarios, not production detection
+accuracy. The benchmark does not evaluate the newer account/source
+correlations, real-world alert latency, or false-positive rates during
+normal device use.
+<!-- SENTINELFORGE_EVAL_END -->
+
 ## Detection coverage
 
-- Security: 4625 repeated failed sign-ins (5 in 10 minutes, grouped per log channel), 4720 account creation, 4728 and 4732 security-group membership, 4697 service installation, 1102 audit log cleared, 4719 audit-policy changes.
+- Security: 4625 repeated failed sign-ins (5 in 10 minutes, with source-aware and legacy unattributed correlation), 4720 account creation, 4728 and 4732 security-group membership, 4697 service installation, 1102 audit log cleared, 4719 audit-policy changes.
 - System: 7045 service installation.
 - Windows Defender Operational: 1116 detection, 1117 remediation, 1118 remediation failure, 5007 selected configuration changes, 5001 real-time protection disabled, 5013 tamper protection blocked a change.
-- 4624 successful sign-ins are collected but not alerted on by default due to high noise.
+- 4624 successful sign-ins do not independently trigger alerts, but may complete a failure-to-success correlation.
 
-**Limitations:** Not all Windows editions expose all events to a standard user. No ETW kernel sensor, malware sandbox, memory scanner, behavioral model, tamper protection, or threat prevention is included. Failed logon bursts are aggregated per channel, not by username or source IP. SQLite stores correlation history and the channel cursor across collector restarts. Detection depends on Windows auditing, log retention, adequate privileges, and event volume. `0 alerts` means no configured rule fired, **not that the machine is clean**.
+**Limitations:** Not all Windows editions expose all events to a standard user. No ETW kernel sensor, malware sandbox, memory scanner, behavioral model, tamper protection, or threat prevention is included. Failed-logon bursts use public IPv4 attribution where available, with legacy per-channel aggregation for unattributed events. Separate advisory correlation matches failed and successful logons by account and source IP or workstation name. SQLite stores correlation history and the channel cursor across collector restarts. Detection depends on Windows auditing, log retention, adequate privileges, and event volume. `0 alerts` means no configured rule fired, **not that the machine is clean**.
 
 ## Privacy and credentials
 

@@ -1,0 +1,3886 @@
+{
+  "generated_utc": "2026-11-20T13:36:53.835262+00:00",
+  "method": "Synthetic scenario benchmark; per-run threshold calibration only",
+  "summary": {
+    "runs": 8,
+    "aggregate": {
+      "tp": 288,
+      "fp": 171,
+      "fn": 0,
+      "tn": 117,
+      "precision": 0.6274509803921569,
+      "recall": 1.0,
+      "f1": 0.7710843373493976
+    },
+    "seed_f1_min": 0.75,
+    "seed_f1_max": 0.7912087912087912,
+    "seed_f1_mean": 0.7712812894591089,
+    "seed_precision_min": 0.6,
+    "seed_recall_min": 1.0,
+    "scenario_breakdown": {
+      "mistyped password": {
+        "episodes": 96,
+        "positive": 0,
+        "flagged": 75,
+        "errors": 75,
+        "false_positives": 75,
+        "false_negatives": 0
+      },
+      "quiet workstation": {
+        "episodes": 96,
+        "positive": 0,
+        "flagged": 0,
+        "errors": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "rapid suspicious sequence": {
+        "episodes": 96,
+        "positive": 96,
+        "flagged": 96,
+        "errors": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "short suspicious sequence": {
+        "episodes": 96,
+        "positive": 96,
+        "flagged": 96,
+        "errors": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "sparse suspicious sequence": {
+        "episodes": 96,
+        "positive": 96,
+        "flagged": 96,
+        "errors": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "stale service credential": {
+        "episodes": 96,
+        "positive": 0,
+        "flagged": 96,
+        "errors": 96,
+        "false_positives": 96,
+        "false_negatives": 0
+      }
+    },
+    "selected_thresholds": {
+      "3": 8,
+      "5": 0,
+      "8": 0
+    }
+  },
+  "individual_runs": [
+    {
+      "seed": 20261111,
+      "chosen_threshold": 3,
+      "metrics": {
+        "tp": 36,
+        "fp": 20,
+        "fn": 0,
+        "tn": 16,
+        "precision": 0.6428571428571429,
+        "recall": 1.0,
+        "f1": 0.782608695652174
+      },
+      "episodes": [
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 13
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        }
+      ],
+      "calibration": {
+        "3": {
+          "tp": 36,
+          "fp": 22,
+          "fn": 0,
+          "tn": 14,
+          "precision": 0.6206896551724138,
+          "recall": 1.0,
+          "f1": 0.7659574468085106
+        },
+        "5": {
+          "tp": 18,
+          "fp": 19,
+          "fn": 18,
+          "tn": 17,
+          "precision": 0.4864864864864865,
+          "recall": 0.5,
+          "f1": 0.4931506849315068
+        },
+        "8": {
+          "tp": 12,
+          "fp": 7,
+          "fn": 24,
+          "tn": 29,
+          "precision": 0.631578947368421,
+          "recall": 0.3333333333333333,
+          "f1": 0.43636363636363634
+        }
+      }
+    },
+    {
+      "seed": 20261113,
+      "chosen_threshold": 3,
+      "metrics": {
+        "tp": 36,
+        "fp": 21,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.631578947368421,
+        "recall": 1.0,
+        "f1": 0.7741935483870968
+      },
+      "episodes": [
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 13
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        }
+      ],
+      "calibration": {
+        "3": {
+          "tp": 36,
+          "fp": 21,
+          "fn": 0,
+          "tn": 15,
+          "precision": 0.631578947368421,
+          "recall": 1.0,
+          "f1": 0.7741935483870968
+        },
+        "5": {
+          "tp": 19,
+          "fp": 15,
+          "fn": 17,
+          "tn": 21,
+          "precision": 0.5588235294117647,
+          "recall": 0.5277777777777778,
+          "f1": 0.5428571428571428
+        },
+        "8": {
+          "tp": 12,
+          "fp": 7,
+          "fn": 24,
+          "tn": 29,
+          "precision": 0.631578947368421,
+          "recall": 0.3333333333333333,
+          "f1": 0.43636363636363634
+        }
+      }
+    },
+    {
+      "seed": 20261115,
+      "chosen_threshold": 3,
+      "metrics": {
+        "tp": 36,
+        "fp": 19,
+        "fn": 0,
+        "tn": 17,
+        "precision": 0.6545454545454545,
+        "recall": 1.0,
+        "f1": 0.7912087912087912
+      },
+      "episodes": [
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        }
+      ],
+      "calibration": {
+        "3": {
+          "tp": 36,
+          "fp": 19,
+          "fn": 0,
+          "tn": 17,
+          "precision": 0.6545454545454545,
+          "recall": 1.0,
+          "f1": 0.7912087912087912
+        },
+        "5": {
+          "tp": 20,
+          "fp": 13,
+          "fn": 16,
+          "tn": 23,
+          "precision": 0.6060606060606061,
+          "recall": 0.5555555555555556,
+          "f1": 0.5797101449275363
+        },
+        "8": {
+          "tp": 12,
+          "fp": 8,
+          "fn": 24,
+          "tn": 28,
+          "precision": 0.6,
+          "recall": 0.3333333333333333,
+          "f1": 0.42857142857142855
+        }
+      }
+    },
+    {
+      "seed": 20261117,
+      "chosen_threshold": 3,
+      "metrics": {
+        "tp": 36,
+        "fp": 21,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.631578947368421,
+        "recall": 1.0,
+        "f1": 0.7741935483870968
+      },
+      "episodes": [
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 13
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        }
+      ],
+      "calibration": {
+        "3": {
+          "tp": 36,
+          "fp": 19,
+          "fn": 0,
+          "tn": 17,
+          "precision": 0.6545454545454545,
+          "recall": 1.0,
+          "f1": 0.7912087912087912
+        },
+        "5": {
+          "tp": 19,
+          "fp": 13,
+          "fn": 17,
+          "tn": 23,
+          "precision": 0.59375,
+          "recall": 0.5277777777777778,
+          "f1": 0.5588235294117647
+        },
+        "8": {
+          "tp": 12,
+          "fp": 10,
+          "fn": 24,
+          "tn": 26,
+          "precision": 0.5454545454545454,
+          "recall": 0.3333333333333333,
+          "f1": 0.41379310344827586
+        }
+      }
+    },
+    {
+      "seed": 20261119,
+      "chosen_threshold": 3,
+      "metrics": {
+        "tp": 36,
+        "fp": 22,
+        "fn": 0,
+        "tn": 14,
+        "precision": 0.6206896551724138,
+        "recall": 1.0,
+        "f1": 0.7659574468085106
+      },
+      "episodes": [
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 13
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        }
+      ],
+      "calibration": {
+        "3": {
+          "tp": 36,
+          "fp": 22,
+          "fn": 0,
+          "tn": 14,
+          "precision": 0.6206896551724138,
+          "recall": 1.0,
+          "f1": 0.7659574468085106
+        },
+        "5": {
+          "tp": 23,
+          "fp": 16,
+          "fn": 13,
+          "tn": 20,
+          "precision": 0.5897435897435898,
+          "recall": 0.6388888888888888,
+          "f1": 0.6133333333333333
+        },
+        "8": {
+          "tp": 12,
+          "fp": 8,
+          "fn": 24,
+          "tn": 28,
+          "precision": 0.6,
+          "recall": 0.3333333333333333,
+          "f1": 0.42857142857142855
+        }
+      }
+    },
+    {
+      "seed": 20261121,
+      "chosen_threshold": 3,
+      "metrics": {
+        "tp": 36,
+        "fp": 24,
+        "fn": 0,
+        "tn": 12,
+        "precision": 0.6,
+        "recall": 1.0,
+        "f1": 0.75
+      },
+      "episodes": [
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 13
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 13
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        }
+      ],
+      "calibration": {
+        "3": {
+          "tp": 36,
+          "fp": 19,
+          "fn": 0,
+          "tn": 17,
+          "precision": 0.6545454545454545,
+          "recall": 1.0,
+          "f1": 0.7912087912087912
+        },
+        "5": {
+          "tp": 21,
+          "fp": 14,
+          "fn": 15,
+          "tn": 22,
+          "precision": 0.6,
+          "recall": 0.5833333333333334,
+          "f1": 0.5915492957746479
+        },
+        "8": {
+          "tp": 12,
+          "fp": 8,
+          "fn": 24,
+          "tn": 28,
+          "precision": 0.6,
+          "recall": 0.3333333333333333,
+          "f1": 0.42857142857142855
+        }
+      }
+    },
+    {
+      "seed": 20261123,
+      "chosen_threshold": 3,
+      "metrics": {
+        "tp": 36,
+        "fp": 23,
+        "fn": 0,
+        "tn": 13,
+        "precision": 0.6101694915254238,
+        "recall": 1.0,
+        "f1": 0.7578947368421053
+      },
+      "episodes": [
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        }
+      ],
+      "calibration": {
+        "3": {
+          "tp": 36,
+          "fp": 22,
+          "fn": 0,
+          "tn": 14,
+          "precision": 0.6206896551724138,
+          "recall": 1.0,
+          "f1": 0.7659574468085106
+        },
+        "5": {
+          "tp": 17,
+          "fp": 15,
+          "fn": 19,
+          "tn": 21,
+          "precision": 0.53125,
+          "recall": 0.4722222222222222,
+          "f1": 0.5
+        },
+        "8": {
+          "tp": 12,
+          "fp": 10,
+          "fn": 24,
+          "tn": 26,
+          "precision": 0.5454545454545454,
+          "recall": 0.3333333333333333,
+          "f1": 0.41379310344827586
+        }
+      }
+    },
+    {
+      "seed": 20261125,
+      "chosen_threshold": 3,
+      "metrics": {
+        "tp": 36,
+        "fp": 21,
+        "fn": 0,
+        "tn": 15,
+        "precision": 0.631578947368421,
+        "recall": 1.0,
+        "f1": 0.7741935483870968
+      },
+      "episodes": [
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 0
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 1
+        },
+        {
+          "scenario": "quiet workstation",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": false,
+          "failed_logons": 2
+        },
+        {
+          "scenario": "mistyped password",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 4
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "stale service credential",
+          "label": false,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 3
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "short suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 9
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 12
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 10
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 14
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 13
+        },
+        {
+          "scenario": "rapid suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 11
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 7
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 5
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 6
+        },
+        {
+          "scenario": "sparse suspicious sequence",
+          "label": true,
+          "predicted": true,
+          "failed_logons": 8
+        }
+      ],
+      "calibration": {
+        "3": {
+          "tp": 36,
+          "fp": 24,
+          "fn": 0,
+          "tn": 12,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75
+        },
+        "5": {
+          "tp": 18,
+          "fp": 18,
+          "fn": 18,
+          "tn": 18,
+          "precision": 0.5,
+          "recall": 0.5,
+          "f1": 0.5
+        },
+        "8": {
+          "tp": 12,
+          "fp": 11,
+          "fn": 24,
+          "tn": 25,
+          "precision": 0.5217391304347826,
+          "recall": 0.3333333333333333,
+          "f1": 0.4067796610169492
+        }
+      }
+    }
+  ]
+}
