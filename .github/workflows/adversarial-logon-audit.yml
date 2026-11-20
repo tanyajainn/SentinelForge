@@ -1,0 +1,37 @@
+name: Adversarial logon audit (synthetic)
+on:
+  push:
+    paths:
+      - 'evaluation/adversarial_logon_audit.py'
+      - 'evaluation/contextual_benchmark.py'
+      - 'tests/test_adversarial_logon_audit.py'
+      - 'sentinelforge/core.py'
+      - '.github/workflows/adversarial-logon-audit.yml'
+  pull_request:
+    paths:
+      - 'evaluation/adversarial_logon_audit.py'
+      - 'evaluation/contextual_benchmark.py'
+      - 'tests/test_adversarial_logon_audit.py'
+      - 'sentinelforge/core.py'
+      - '.github/workflows/adversarial-logon-audit.yml'
+  workflow_dispatch:
+
+jobs:
+  adversarial-synthetic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test audit harness
+        run: python -m unittest discover -s tests -p test_adversarial_logon_audit.py -v
+      - name: Evaluate hard cases
+        run: python -m evaluation.adversarial_logon_audit --seeds 3 --repetitions 2 --ci-check --out evaluation/results/adversarial_logon
+      - name: Archive report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: adversarial-logon-synthetic
+          path: evaluation/results/adversarial_logon/
+          if-no-files-found: warn
