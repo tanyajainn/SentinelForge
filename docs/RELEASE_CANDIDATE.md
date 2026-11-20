@@ -1,8 +1,8 @@
 # SentinelForge — Windows Release Candidate
 
-**Status:** Release candidate, pending independent Windows VM acceptance testing  
-**Source branch:** `feature/detection-v2`  
-**Build date:** 2026-11-20  
+**Status:** Release candidate, pending independent Windows VM acceptance testing
+**Source branch:** `feature/detection-v2`
+**Build date:** 2026-11-20
 **Package:** `SentinelForge-Windows.zip`
 
 ## Scope
