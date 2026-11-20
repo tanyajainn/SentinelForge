@@ -17,6 +17,20 @@ SentinelForge is a user-scoped Windows monitoring prototype. It reads selected n
 - The application has not yet passed clean-install testing on another Windows computer.
 
 **Security limitations:** SentinelForge detects selected event patterns. It does not block attacks, replace Microsoft Defender, or guarantee detection of every threat.
+
+## Project Status
+
+**Portfolio Research Prototype | Maintenance Mode**
+
+Active feature development concluded in November 2026.
+
+SentinelForge demonstrates Windows event monitoring, rule-based threat detection, SQLite persistence, notification handling, and experimental multi-endpoint reporting.
+
+Automated regression tests have passed. Gmail delivery was verified on the developer's Windows installation.
+
+**Known limitations:** Independent Windows installation, deployment hardening, and broader reliability validation remain incomplete. This software is not production-ready.
+
+Future changes will focus on bug fixes, security corrections, and documentation.
 ## Architecture
 
 ```text
