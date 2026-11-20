@@ -12,7 +12,7 @@ from pathlib import Path
 
 from .core import RULES
 from .fleet import LABEL
-from .pilot import _table
+from .campus_dashboard import render_dashboard
 
 DATA = Path.home() / "SentinelForgeData"
 DB = DATA / "events.sqlite3"
@@ -100,13 +100,7 @@ def render(root, devices):
             alerts.extend(recent[:100])
         except (OSError, TypeError, ValueError, AttributeError):
             inventory[-1] = (device, state, seen, "Alert history unreadable")
-    return ('<!doctype html><meta charset=utf-8><meta http-equiv=refresh content=15>'
-            '<title>SentinelForge campus</title><style>body{font:16px system-ui;margin:3%}table{border-collapse:collapse}'
-            'td,th{padding:7px;text-align:left;border-bottom:1px solid #ccc}</style><h1>Campus monitoring</h1>'
-            + '<p>Generated '+datetime.now(timezone.utc).isoformat(timespec="seconds")+'</p>'
-            + _table(["Device","Publisher","Last check-in","Collection health"], inventory)
-            + '<h2>Latest 100 alerts</h2>' + _table(["Event time","Device","Severity","Finding","Local ID"],
-                                                   sorted(alerts,reverse=True)[:100]))
+    return render_dashboard(inventory, alerts)
 
 
 def main():
