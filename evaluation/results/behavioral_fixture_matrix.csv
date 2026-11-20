@@ -1,0 +1,15 @@
+event_id,scenario,context,positive_label,detected,alert_rule
+4720,Account creation,Simulated unauthorized activity,1,1,event-4720
+4720,Account creation,Simulated authorized administration,0,1,event-4720
+4728,Global group membership change,Simulated unauthorized activity,1,1,event-4728
+4728,Global group membership change,Simulated authorized administration,0,1,event-4728
+4732,Local group membership change,Simulated unauthorized activity,1,1,event-4732
+4732,Local group membership change,Simulated authorized administration,0,1,event-4732
+4697,Security-audited service installation,Simulated unauthorized activity,1,1,event-4697
+4697,Security-audited service installation,Simulated authorized administration,0,1,event-4697
+7045,System service installation,Simulated unauthorized activity,1,1,event-7045
+7045,System service installation,Simulated authorized administration,0,1,event-7045
+1102,Security audit log clearing,Simulated unauthorized activity,1,1,event-1102
+1102,Security audit log clearing,Simulated authorized administration,0,1,event-1102
+4719,Audit policy modification,Simulated unauthorized activity,1,1,event-4719
+4719,Audit policy modification,Simulated authorized administration,0,1,event-4719
