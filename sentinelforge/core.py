@@ -44,6 +44,10 @@ class Event:
     source_ip: str | None = None
     target_username: str | None = None
     logon_type: int | None = None
+    target_domain: str | None = None
+    target_sid: str | None = None
+    member_sid: str | None = None
+    workstation_name: str | None = None
 
 @dataclass
 class Alert:
@@ -67,6 +71,10 @@ class Store:
         self.db.execute('CREATE TABLE IF NOT EXISTS emailed_config_changes (fingerprint TEXT PRIMARY KEY, queued_at REAL NOT NULL)')
         self.db.execute('CREATE TABLE IF NOT EXISTS detector_state (channel TEXT PRIMARY KEY, failures TEXT NOT NULL, last_burst TEXT)')
         self.db.execute('CREATE TABLE IF NOT EXISTS source_failure_state (channel TEXT NOT NULL, source_ip TEXT NOT NULL, failures TEXT NOT NULL, last_burst TEXT, PRIMARY KEY(channel,source_ip))')
+        self.db.execute('CREATE TABLE IF NOT EXISTS correlation_evidence (channel TEXT NOT NULL,record_id INTEGER NOT NULL,event_id INTEGER NOT NULL, instant_us INTEGER NOT NULL,source_ip TEXT,account_key TEXT,sid TEXT, PRIMARY KEY(channel,record_id))')
+        self.db.execute('CREATE INDEX IF NOT EXISTS idx_correlation_ip ON correlation_evidence(channel,event_id,source_ip,account_key,instant_us)')
+        self.db.execute('CREATE INDEX IF NOT EXISTS idx_correlation_account_sid ON correlation_evidence(channel,event_id,sid,instant_us)')
+        self.db.execute('CREATE TABLE IF NOT EXISTS correlation_emissions (channel TEXT NOT NULL,rule TEXT NOT NULL,entity TEXT NOT NULL, last_record_id INTEGER NOT NULL,PRIMARY KEY(channel,rule,entity))')
         self.db.commit()
 
     def is_baselined(self):
@@ -194,6 +202,7 @@ class Store:
                 if event.channel != channel:
                     raise ValueError(f'Unexpected event channel: {event.channel}')
                 new_alerts = detector.process(event)
+                new_alerts.extend(self._correlate_event(event, detector))
                 for alert in new_alerts:
                     key = (event.detection_id or '').strip().lower()
                     if key and event.event_id == 1116:
@@ -249,6 +258,119 @@ class Store:
                                 (channel, ip, json.dumps(history), burst.isoformat() if burst else None))
             self.db.execute('INSERT OR REPLACE INTO cursor VALUES(?,?)', (channel, cursor))
         return alerts
+
+    def _correlate_event(self, event, detector):
+        """Persist advisory multi-event correlations inside the ingestion transaction.
+
+        These detections never authorize automatic blocking or remediation.
+        Source/IP attribution is intentionally conservative and public-IPv4-only;
+        a workstation name can independently link advisory sign-in evidence.
+        """
+        import re
+        from .attribution import safe_source_ip
+
+        if event.channel != 'Security' or event.event_id not in (4625, 4624, 4720, 4728, 4732):
+            return []
+        now = datetime.fromisoformat(event.timestamp.replace('Z', '+00:00'))
+        if now.tzinfo is None:
+            now = now.replace(tzinfo=timezone.utc)
+        instant = int(now.timestamp() * 1000000)
+        window = int(detector.window.total_seconds() * 1000000)
+        cutoff = instant - window
+        self.db.execute('DELETE FROM correlation_evidence WHERE channel=? AND instant_us<?',
+                        (event.channel, instant - max(window * 2, 24 * 3600 * 1000000)))
+
+        def normalized_account():
+            user = (event.target_username or '').strip()
+            if not user or user == '-':
+                return None
+            domain = (event.target_domain or '').strip()
+            return ((domain + chr(92) + user) if domain else user).casefold()
+
+        ip = safe_source_ip(event.source_ip)
+        workstation = (event.workstation_name or '').strip().casefold()
+        source_key = ip
+        if not ip and re.fullmatch(r'[a-z0-9][a-z0-9._-]{0,127}', workstation):
+            source_key = 'workstation:' + workstation
+        account = normalized_account()
+        if event.event_id == 4625:
+            if source_key and account:
+                self.db.execute(
+                    'INSERT OR IGNORE INTO correlation_evidence '
+                    '(channel,record_id,event_id,instant_us,source_ip,account_key,sid) '
+                    'VALUES(?,?,?,?,?,?,NULL)',
+                    (event.channel, event.record_id, event.event_id, instant, source_key, account))
+            return []
+
+        if event.event_id == 4720:
+            sid = (event.target_sid or '').strip()
+            if re.fullmatch(r'S-[0-9]+(?:-[0-9]+){2,}', sid):
+                self.db.execute(
+                    'INSERT OR IGNORE INTO correlation_evidence '
+                    '(channel,record_id,event_id,instant_us,source_ip,account_key,sid) '
+                    'VALUES(?,?,?,?,NULL,NULL,?)',
+                    (event.channel, event.record_id, event.event_id, instant, sid))
+            return []
+
+        if event.event_id == 4624:
+            if not source_key or not account:
+                return []
+            entity = source_key + '|' + account
+            previous = self.db.execute(
+                'SELECT last_record_id FROM correlation_emissions '
+                'WHERE channel=? AND rule=? AND entity=?',
+                (event.channel, 'correlation-logon-success', entity)).fetchone()
+            last_used = previous[0] if previous else 0
+            count, latest, earliest = self.db.execute(
+                'SELECT COUNT(*),MAX(record_id),MIN(instant_us) FROM correlation_evidence '
+                'WHERE channel=? AND event_id=4625 AND source_ip=? AND account_key=? '
+                'AND instant_us BETWEEN ? AND ? AND record_id>? AND record_id<?',
+                (event.channel, source_key, account, cutoff, instant, last_used, event.record_id)
+            ).fetchone()
+            if count < detector.threshold:
+                return []
+            self.db.execute(
+                'INSERT INTO correlation_emissions(channel,rule,entity,last_record_id) '
+                'VALUES(?,?,?,?) ON CONFLICT(channel,rule,entity) DO UPDATE SET '
+                'last_record_id=excluded.last_record_id',
+                (event.channel, 'correlation-logon-success', entity, latest))
+            detail = asdict(event)
+            detail.update(correlation_source_kind="public_ip" if ip else "workstation",
+                          matched_failure_count=count, last_failure_record_id=latest,
+                          first_failure_at=datetime.fromtimestamp(
+                              earliest / 1000000, timezone.utc).isoformat(),
+                          correlation_window_minutes=int(detector.window.total_seconds() / 60),
+                          attack_id='T1110',
+                          interpretation='Possible brute force followed by successful authentication')
+            return [Alert('correlation-logon-success', 'high',
+                          'Repeated failures followed by a success for the same account and source',
+                          event.timestamp, [detail])]
+
+        member = (event.member_sid or '').strip()
+        group = (event.target_sid or '').strip()
+        # 544 = BUILTIN\Administrators; 512 = Domain Admins;
+        # 519 = Enterprise Admins. Only these well-known RID patterns are accepted.
+        privileged = (group == 'S-1-5-32-544' or bool(re.fullmatch(
+            r'S-1-5-21-[0-9]+-[0-9]+-[0-9]+-(?:512|519)', group)))
+        if not (member and privileged and re.fullmatch(r'S-[0-9]+(?:-[0-9]+){2,}', member)):
+            return []
+        created = self.db.execute(
+            'SELECT record_id,instant_us FROM correlation_evidence '
+            'WHERE channel=? AND event_id=4720 AND sid=? '
+            'AND instant_us BETWEEN ? AND ? AND record_id<? '
+            'ORDER BY instant_us DESC LIMIT 1',
+            (event.channel, member, cutoff, instant, event.record_id)).fetchone()
+        if not created:
+            return []
+        detail = asdict(event)
+        detail.update(created_record_id=created[0],
+                      created_at=datetime.fromtimestamp(
+                          created[1] / 1000000, timezone.utc).isoformat(),
+                      matched_member_sid=member, privileged_group_sid=group,
+                      attack_id='T1098',
+                      interpretation='Recently created account added to a privileged security group')
+        return [Alert('correlation-new-privileged-account', 'high',
+                      'New account added to privileged group', event.timestamp, [detail])]
 
     def _group_config_email(self, alert_id, message):
         # Only group identical Defender messages. Changed values get their own mail.

@@ -1,0 +1,10 @@
+{
+  "event_id": 4726,
+  "validation_type": "real Windows event, end-to-end",
+  "collector": "PASS",
+  "detector": "PASS",
+  "sqlite_persistence": "PASS",
+  "database": "temporary isolated SQLite",
+  "detection_latency_ms": null,
+  "limitations": "Single event; latency and false positives not measured"
+}
