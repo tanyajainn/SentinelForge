@@ -102,6 +102,18 @@ class CorrelationTests(unittest.TestCase):
                                                     self.success(10)),
                                         "correlation-logon-success")), 1)
 
+    def test_workstation_fallback_survives_restart_and_isolates_identity(self):
+        def log(record, eid, station, user="Alice"):
+            return event(record, eid, workstation_name=station, target_username=user)
+        self.ingest(*[log(i, 4625, "Desk-A") for i in (1, 2, 3)])
+        self.restart()
+        self.assertFalse(self.ingest(log(4, 4624, "Desk-B"), log(5, 4624, "Desk-A", "Bob")))
+        hit = correlated(self.ingest(log(6, 4624, "DESK-A")), "correlation-logon-success")
+        self.assertEqual(len(hit), 1)
+        self.assertEqual(hit[0].evidence[0]["correlation_source_kind"], "workstation")
+        self.assertIsNone(hit[0].evidence[0]["source_ip"])
+        self.assertFalse(self.ingest(log(7, 4624, "Desk-A")))
+
     def test_expired_failures_do_not_correlate(self):
         self.ingest(*[event(i, 4625, source_ip="8.8.8.8", target_username="Alice",
                             target_domain="LAB", seconds=i * 10) for i in (1, 2, 3)])
@@ -144,6 +156,7 @@ class WindowsEnrichmentTests(unittest.TestCase):
             self.assertEqual(fetch("Security", 0), [])
         ps = call.call_args.args[0][-1]
         self.assertIn("4624,4625,4720,4728,4732", ps)
+        self.assertIn("WorkstationName", ps)
         self.assertIn("MemberSid", ps)
         self.assertIn("TargetSid", ps)
 

@@ -33,7 +33,7 @@ if ($_.Id -in 4624,4625,4720,4728,4732,1116,1117,1118) {{
         $fields[$node.GetAttribute('Name')] = $node.InnerText
     }}
 }}
-[pscustomobject]@{{source_ip=$fields['IpAddress'];target_username=$fields['TargetUserName'];logon_type=$fields['LogonType'];detection_id=$fields['Detection ID'];action_name=$fields['Action Name'];target_domain=$fields['TargetDomainName'];target_sid=$fields['TargetSid'];member_sid=$fields['MemberSid'];channel=$_.LogName;record_id=[long]$_.RecordId;event_id=[int]$_.Id;timestamp=$_.TimeCreated.ToUniversalTime().ToString('o');provider=$_.ProviderName;message=($_.Message | Out-String).Trim()}} }}) | ConvertTo-Json -Depth 4 -Compress
+[pscustomobject]@{{workstation_name=$fields['WorkstationName'];source_ip=$fields['IpAddress'];target_username=$fields['TargetUserName'];logon_type=$fields['LogonType'];detection_id=$fields['Detection ID'];action_name=$fields['Action Name'];target_domain=$fields['TargetDomainName'];target_sid=$fields['TargetSid'];member_sid=$fields['MemberSid'];channel=$_.LogName;record_id=[long]$_.RecordId;event_id=[int]$_.Id;timestamp=$_.TimeCreated.ToUniversalTime().ToString('o');provider=$_.ProviderName;message=($_.Message | Out-String).Trim()}} }}) | ConvertTo-Json -Depth 4 -Compress
 '''
     p = subprocess.run(['powershell.exe','-NoProfile','-NonInteractive','-Command',ps],
                        capture_output=True, text=True, timeout=90,
@@ -51,7 +51,7 @@ if ($_.Id -in 4624,4625,4720,4728,4732,1116,1117,1118) {{
         if r['event_id'] in (4624, 4625):
             r['source_ip'] = safe_source_ip(r.get('source_ip'))
             r['logon_type'] = safe_logon_type(r.get('logon_type'))
-        for key in ('target_username', 'target_domain', 'target_sid', 'member_sid'):
+        for key in ('workstation_name', 'target_username', 'target_domain', 'target_sid', 'member_sid'):
             if r.get(key):
                 r[key] = str(r[key])[:128]
     return [Event(**r) for r in rows]

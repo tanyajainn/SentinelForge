@@ -47,6 +47,7 @@ class Event:
     target_domain: str | None = None
     target_sid: str | None = None
     member_sid: str | None = None
+    workstation_name: str | None = None
 
 @dataclass
 class Alert:
@@ -263,7 +264,7 @@ class Store:
 
         These detections never authorize automatic blocking or remediation.
         Source/IP attribution is intentionally conservative and public-IPv4-only;
-        a later design can support private IPs for detection independently of response.
+        a workstation name can independently link advisory sign-in evidence.
         """
         import re
         from .attribution import safe_source_ip
@@ -287,14 +288,18 @@ class Store:
             return ((domain + chr(92) + user) if domain else user).casefold()
 
         ip = safe_source_ip(event.source_ip)
+        workstation = (event.workstation_name or '').strip().casefold()
+        source_key = ip
+        if not ip and re.fullmatch(r'[a-z0-9][a-z0-9._-]{0,127}', workstation):
+            source_key = 'workstation:' + workstation
         account = normalized_account()
         if event.event_id == 4625:
-            if ip and account:
+            if source_key and account:
                 self.db.execute(
                     'INSERT OR IGNORE INTO correlation_evidence '
                     '(channel,record_id,event_id,instant_us,source_ip,account_key,sid) '
                     'VALUES(?,?,?,?,?,?,NULL)',
-                    (event.channel, event.record_id, event.event_id, instant, ip, account))
+                    (event.channel, event.record_id, event.event_id, instant, source_key, account))
             return []
 
         if event.event_id == 4720:
@@ -308,9 +313,9 @@ class Store:
             return []
 
         if event.event_id == 4624:
-            if not ip or not account:
+            if not source_key or not account:
                 return []
-            entity = ip + '|' + account
+            entity = source_key + '|' + account
             previous = self.db.execute(
                 'SELECT last_record_id FROM correlation_emissions '
                 'WHERE channel=? AND rule=? AND entity=?',
@@ -320,7 +325,7 @@ class Store:
                 'SELECT COUNT(*),MAX(record_id),MIN(instant_us) FROM correlation_evidence '
                 'WHERE channel=? AND event_id=4625 AND source_ip=? AND account_key=? '
                 'AND instant_us BETWEEN ? AND ? AND record_id>? AND record_id<?',
-                (event.channel, ip, account, cutoff, instant, last_used, event.record_id)
+                (event.channel, source_key, account, cutoff, instant, last_used, event.record_id)
             ).fetchone()
             if count < detector.threshold:
                 return []
@@ -330,7 +335,8 @@ class Store:
                 'last_record_id=excluded.last_record_id',
                 (event.channel, 'correlation-logon-success', entity, latest))
             detail = asdict(event)
-            detail.update(matched_failure_count=count, last_failure_record_id=latest,
+            detail.update(correlation_source_kind="public_ip" if ip else "workstation",
+                          matched_failure_count=count, last_failure_record_id=latest,
                           first_failure_at=datetime.fromtimestamp(
                               earliest / 1000000, timezone.utc).isoformat(),
                           correlation_window_minutes=int(detector.window.total_seconds() / 60),
