@@ -1,0 +1,462 @@
+{
+  "warning": "Synthetic generator assumptions, not measured production accuracy",
+  "assessment": "Opt-in v3 only; existing legacy alerts excluded from v3 score",
+  "method": "One binary prediction per episode; in-memory Store.ingest_batch for v3; no live installation",
+  "seeds": 30,
+  "repetitions": 8,
+  "base_seed": 20261120,
+  "threshold": 5,
+  "window_minutes": 10,
+  "datasets": {
+    "original_contextual": {
+      "scenarios": {
+        "isolated_mistakes": false,
+        "shared_nat_benign": false,
+        "stale_service_credential": false,
+        "targeted_brute_force": true,
+        "password_spraying": true,
+        "distributed_brute_force": true
+      },
+      "results": {
+        "current_source_ip": {
+          "aggregate": {
+            "tp": 480,
+            "fp": 480,
+            "fn": 240,
+            "tn": 240,
+            "precision": 0.5,
+            "recall": 0.6666666666666666,
+            "f1": 0.5714285714285714
+          },
+          "seed_statistics": {
+            "precision": {
+              "mean": 0.5,
+              "sd": 0.0
+            },
+            "recall": {
+              "mean": 0.6666666666666666,
+              "sd": 0.0
+            },
+            "f1": {
+              "mean": 0.5714285714285714,
+              "sd": 0.0
+            }
+          },
+          "by_scenario": {
+            "isolated_mistakes": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "shared_nat_benign": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "stale_service_credential": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "targeted_brute_force": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            },
+            "password_spraying": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            },
+            "distributed_brute_force": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            }
+          }
+        },
+        "experimental_contextual": {
+          "aggregate": {
+            "tp": 720,
+            "fp": 240,
+            "fn": 0,
+            "tn": 480,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571
+          },
+          "seed_statistics": {
+            "precision": {
+              "mean": 0.75,
+              "sd": 0.0
+            },
+            "recall": {
+              "mean": 1.0,
+              "sd": 0.0
+            },
+            "f1": {
+              "mean": 0.8571428571428571,
+              "sd": 0.0
+            }
+          },
+          "by_scenario": {
+            "isolated_mistakes": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "shared_nat_benign": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "stale_service_credential": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "targeted_brute_force": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            },
+            "password_spraying": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            },
+            "distributed_brute_force": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            }
+          }
+        },
+        "opt_in_v3_only": {
+          "aggregate": {
+            "tp": 720,
+            "fp": 240,
+            "fn": 0,
+            "tn": 480,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571
+          },
+          "seed_statistics": {
+            "precision": {
+              "mean": 0.75,
+              "sd": 0.0
+            },
+            "recall": {
+              "mean": 1.0,
+              "sd": 0.0
+            },
+            "f1": {
+              "mean": 0.8571428571428571,
+              "sd": 0.0
+            }
+          },
+          "by_scenario": {
+            "isolated_mistakes": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "shared_nat_benign": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "stale_service_credential": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "targeted_brute_force": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            },
+            "password_spraying": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            },
+            "distributed_brute_force": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            }
+          }
+        }
+      },
+      "v3_emitted_rules": {
+        "v3-account-source-burst": 480,
+        "v3-password-spray": 240,
+        "v3-distributed-guessing": 240
+      }
+    },
+    "adversarial_challenge": {
+      "scenarios": {
+        "slow_password_spray": true,
+        "low_rate_distributed": true,
+        "private_ip_targeted": true,
+        "fast_benign_shared_nat": false,
+        "stale_service_credential": false,
+        "missing_ip_benign": false,
+        "benign_account_multiple_ips": false,
+        "password_reset_typos": false
+      },
+      "results": {
+        "current_source_ip": {
+          "aggregate": {
+            "tp": 0,
+            "fp": 960,
+            "fn": 720,
+            "tn": 240,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "seed_statistics": {
+            "precision": {
+              "mean": 0.0,
+              "sd": 0.0
+            },
+            "recall": {
+              "mean": 0.0,
+              "sd": 0.0
+            },
+            "f1": {
+              "mean": 0.0,
+              "sd": 0.0
+            }
+          },
+          "by_scenario": {
+            "slow_password_spray": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            },
+            "low_rate_distributed": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            },
+            "private_ip_targeted": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            },
+            "fast_benign_shared_nat": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "stale_service_credential": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "missing_ip_benign": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "benign_account_multiple_ips": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "password_reset_typos": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            }
+          }
+        },
+        "experimental_contextual": {
+          "aggregate": {
+            "tp": 240,
+            "fp": 1200,
+            "fn": 480,
+            "tn": 0,
+            "precision": 0.16666666666666666,
+            "recall": 0.3333333333333333,
+            "f1": 0.2222222222222222
+          },
+          "seed_statistics": {
+            "precision": {
+              "mean": 0.16666666666666666,
+              "sd": 0.0
+            },
+            "recall": {
+              "mean": 0.3333333333333333,
+              "sd": 0.0
+            },
+            "f1": {
+              "mean": 0.2222222222222222,
+              "sd": 0.0
+            }
+          },
+          "by_scenario": {
+            "slow_password_spray": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            },
+            "low_rate_distributed": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            },
+            "private_ip_targeted": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 0,
+              "fn": 0
+            },
+            "fast_benign_shared_nat": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "stale_service_credential": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "missing_ip_benign": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "benign_account_multiple_ips": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "password_reset_typos": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            }
+          }
+        },
+        "opt_in_v3_only": {
+          "aggregate": {
+            "tp": 0,
+            "fp": 960,
+            "fn": 720,
+            "tn": 240,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "seed_statistics": {
+            "precision": {
+              "mean": 0.0,
+              "sd": 0.0
+            },
+            "recall": {
+              "mean": 0.0,
+              "sd": 0.0
+            },
+            "f1": {
+              "mean": 0.0,
+              "sd": 0.0
+            }
+          },
+          "by_scenario": {
+            "slow_password_spray": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            },
+            "low_rate_distributed": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            },
+            "private_ip_targeted": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 240
+            },
+            "fast_benign_shared_nat": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "stale_service_credential": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "missing_ip_benign": {
+              "episodes": 240,
+              "flagged": 0,
+              "fp": 0,
+              "fn": 0
+            },
+            "benign_account_multiple_ips": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            },
+            "password_reset_typos": {
+              "episodes": 240,
+              "flagged": 240,
+              "fp": 240,
+              "fn": 0
+            }
+          }
+        }
+      },
+      "v3_emitted_rules": {
+        "v3-password-spray": 240,
+        "v3-account-source-burst": 480,
+        "v3-distributed-guessing": 240
+      }
+    }
+  }
+}

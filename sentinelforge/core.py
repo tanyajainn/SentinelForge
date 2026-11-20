@@ -58,7 +58,8 @@ class Alert:
     evidence: list[dict]
 
 class Store:
-    def __init__(self, path: str):
+    def __init__(self, path: str, *, contextual_v3: bool = False):
+        self.contextual_v3 = bool(contextual_v3)
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(path)
         self.db.execute('CREATE TABLE IF NOT EXISTS defender_detections (detection_id TEXT PRIMARY KEY, record_id INTEGER NOT NULL, observed TEXT NOT NULL)')
@@ -75,6 +76,9 @@ class Store:
         self.db.execute('CREATE INDEX IF NOT EXISTS idx_correlation_ip ON correlation_evidence(channel,event_id,source_ip,account_key,instant_us)')
         self.db.execute('CREATE INDEX IF NOT EXISTS idx_correlation_account_sid ON correlation_evidence(channel,event_id,sid,instant_us)')
         self.db.execute('CREATE TABLE IF NOT EXISTS correlation_emissions (channel TEXT NOT NULL,rule TEXT NOT NULL,entity TEXT NOT NULL, last_record_id INTEGER NOT NULL,PRIMARY KEY(channel,rule,entity))')
+        if self.contextual_v3:
+            from .contextual_v3 import setup as setup_v3
+            setup_v3(self.db)
         self.db.commit()
 
     def is_baselined(self):
@@ -203,6 +207,9 @@ class Store:
                     raise ValueError(f'Unexpected event channel: {event.channel}')
                 new_alerts = detector.process(event)
                 new_alerts.extend(self._correlate_event(event, detector))
+                if self.contextual_v3:
+                    from .contextual_v3 import observe as observe_v3
+                    new_alerts.extend(observe_v3(self.db, event, detector))
                 for alert in new_alerts:
                     key = (event.detection_id or '').strip().lower()
                     if key and event.event_id == 1116:
