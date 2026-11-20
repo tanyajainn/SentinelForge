@@ -1,0 +1,38 @@
+name: Contextual logon benchmark (synthetic)
+on:
+  push:
+    paths:
+      - evaluation/contextual_benchmark.py
+      - tests/test_contextual_benchmark.py
+      - sentinelforge/core.py
+      - sentinelforge/attribution.py
+      - .github/workflows/contextual-benchmark.yml
+  pull_request:
+    paths:
+      - evaluation/contextual_benchmark.py
+      - tests/test_contextual_benchmark.py
+      - sentinelforge/core.py
+      - sentinelforge/attribution.py
+      - .github/workflows/contextual-benchmark.yml
+  workflow_dispatch:
+jobs:
+  synthetic-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Benchmark unit contracts
+        run: python -m unittest discover -s tests -p test_contextual_benchmark.py -v
+      - name: Synthetic regression guardrails
+        run: python -m evaluation.contextual_benchmark --seeds 3 --repetitions 2 --ci-check --out evaluation/results/contextual_benchmark
+      - name: Save synthetic report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contextual-benchmark-synthetic
+          path: |
+            evaluation/results/contextual_benchmark/results.json
+            evaluation/results/contextual_benchmark/results.md
+          if-no-files-found: warn
