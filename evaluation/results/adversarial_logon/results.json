@@ -1,0 +1,260 @@
+{
+  "disclaimer": "Synthetic counterexamples, not independent validation or production accuracy",
+  "seeds": 30,
+  "repetitions": 8,
+  "base_seed": 20261220,
+  "threshold": 5,
+  "window_minutes": 10,
+  "cases": {
+    "slow_password_spray": {
+      "label": true,
+      "description": "Attack spread across accounts over a long period"
+    },
+    "low_rate_distributed": {
+      "label": true,
+      "description": "One account from many sources, outside fast correlation window"
+    },
+    "private_ip_targeted": {
+      "label": true,
+      "description": "Repeated failures from one RFC1918 address; policy may decline attribution"
+    },
+    "fast_benign_shared_nat": {
+      "label": false,
+      "description": "Many users mistype credentials quickly behind one NAT"
+    },
+    "stale_service_credential": {
+      "label": false,
+      "description": "Authorized service misconfiguration repeatedly fails"
+    },
+    "missing_ip_benign": {
+      "label": false,
+      "description": "Distinct users with no source field should not be one attributed source"
+    },
+    "benign_account_multiple_ips": {
+      "label": false,
+      "description": "One user through several legitimate egress IP addresses"
+    },
+    "password_reset_typos": {
+      "label": false,
+      "description": "One person makes repeated legitimate mistakes"
+    }
+  },
+  "policies": {
+    "legacy_channel": {
+      "confusion": {
+        "tp": 240,
+        "fp": 1200,
+        "fn": 480,
+        "tn": 0
+      },
+      "seed_statistics": {
+        "precision": {
+          "mean": 0.16666666666666666,
+          "sd": 0.0
+        },
+        "recall": {
+          "mean": 0.3333333333333333,
+          "sd": 0.0
+        },
+        "f1": {
+          "mean": 0.2222222222222222,
+          "sd": 0.0
+        }
+      },
+      "scenarios": {
+        "slow_password_spray": {
+          "episodes": 240,
+          "flagged": 0,
+          "fp": 0,
+          "fn": 240
+        },
+        "low_rate_distributed": {
+          "episodes": 240,
+          "flagged": 0,
+          "fp": 0,
+          "fn": 240
+        },
+        "private_ip_targeted": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 0,
+          "fn": 0
+        },
+        "fast_benign_shared_nat": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "stale_service_credential": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "missing_ip_benign": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "benign_account_multiple_ips": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "password_reset_typos": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        }
+      }
+    },
+    "current_source_ip": {
+      "confusion": {
+        "tp": 0,
+        "fp": 960,
+        "fn": 720,
+        "tn": 240
+      },
+      "seed_statistics": {
+        "precision": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "recall": {
+          "mean": 0.0,
+          "sd": 0.0
+        },
+        "f1": {
+          "mean": 0.0,
+          "sd": 0.0
+        }
+      },
+      "scenarios": {
+        "slow_password_spray": {
+          "episodes": 240,
+          "flagged": 0,
+          "fp": 0,
+          "fn": 240
+        },
+        "low_rate_distributed": {
+          "episodes": 240,
+          "flagged": 0,
+          "fp": 0,
+          "fn": 240
+        },
+        "private_ip_targeted": {
+          "episodes": 240,
+          "flagged": 0,
+          "fp": 0,
+          "fn": 240
+        },
+        "fast_benign_shared_nat": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "stale_service_credential": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "missing_ip_benign": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "benign_account_multiple_ips": {
+          "episodes": 240,
+          "flagged": 0,
+          "fp": 0,
+          "fn": 0
+        },
+        "password_reset_typos": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        }
+      }
+    },
+    "experimental_contextual": {
+      "confusion": {
+        "tp": 240,
+        "fp": 1200,
+        "fn": 480,
+        "tn": 0
+      },
+      "seed_statistics": {
+        "precision": {
+          "mean": 0.16666666666666666,
+          "sd": 0.0
+        },
+        "recall": {
+          "mean": 0.3333333333333333,
+          "sd": 0.0
+        },
+        "f1": {
+          "mean": 0.2222222222222222,
+          "sd": 0.0
+        }
+      },
+      "scenarios": {
+        "slow_password_spray": {
+          "episodes": 240,
+          "flagged": 0,
+          "fp": 0,
+          "fn": 240
+        },
+        "low_rate_distributed": {
+          "episodes": 240,
+          "flagged": 0,
+          "fp": 0,
+          "fn": 240
+        },
+        "private_ip_targeted": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 0,
+          "fn": 0
+        },
+        "fast_benign_shared_nat": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "stale_service_credential": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "missing_ip_benign": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "benign_account_multiple_ips": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        },
+        "password_reset_typos": {
+          "episodes": 240,
+          "flagged": 240,
+          "fp": 240,
+          "fn": 0
+        }
+      }
+    }
+  }
+}
